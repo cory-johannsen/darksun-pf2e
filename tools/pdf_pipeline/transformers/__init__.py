@@ -5,14 +5,14 @@ from __future__ import annotations
 from typing import Callable, Dict
 
 from .ancestries import transform as transform_ancestries
-from .journal import transform as transform_journal
+from .journal_v2 import transform as transform_journal_v2
 
 Transformer = Callable[..., dict]
 
 
 REGISTRY: Dict[str, Transformer] = {
     "ancestries": transform_ancestries,
-    "journal": transform_journal,
+    "journal_v2": transform_journal_v2,
 }
 
 

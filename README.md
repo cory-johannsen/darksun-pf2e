@@ -1,6 +1,6 @@
 # darksun-p2fe
 
-Pathfinder 2E Foundry VTT compendia that implement the Dark Sun universe.
+A pipeline to building a Pathfinder 2E Foundry VTT compendia that implement the Dark Sun universe.
 
 ## Getting Started
 
@@ -14,7 +14,7 @@ pip install -r requirements.txt
 
 1. **Extract source PDF**
    ```bash
-   python scripts/extract_pdf.py
+   python scripts/extract_pdf.py --format structured
    ```
 
 2. **Transform into PF2E datasets**
@@ -22,12 +22,17 @@ pip install -r requirements.txt
    python scripts/transform_data.py
    ```
 
-3. **Build Foundry compendia**
+3. **Preview extraction results (optional)**
+   ```bash
+   python scripts/verify_extraction.py --slug chapter-one-the-world-of-athas
+   ```
+
+4. **Build Foundry compendia**
    ```bash
    python scripts/build_compendia.py
    ```
 
-4. **Run validation**
+5. **Run validation**
    ```bash
    python scripts/validate_data.py
    ```
