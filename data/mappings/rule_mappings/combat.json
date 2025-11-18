@@ -1,0 +1,53 @@
+{
+  "name": "Combat Mechanic Conversions",
+  "description": "Mappings for converting AD&D 2E combat mechanics to PF2E",
+  "version": "1.0.0",
+  "thac0_conversion": {
+    "description": "Convert THAC0 to PF2E attack bonus",
+    "formula": "20 - THAC0",
+    "notes": [
+      "This is a simplified conversion",
+      "Actual attack bonuses depend on class progression and proficiency"
+    ]
+  },
+  "armor_class_conversion": {
+    "description": "Convert descending AC to ascending AC",
+    "formula": "20 - AD&D_AC",
+    "examples": {
+      "10": 10,
+      "5": 15,
+      "0": 20,
+      "-5": 25
+    },
+    "notes": [
+      "AD&D uses descending AC (lower is better)",
+      "PF2E uses ascending AC (higher is better)"
+    ]
+  },
+  "initiative": {
+    "adnd": "d10 roll (lower is faster)",
+    "pf2e": "Perception + bonuses",
+    "conversion": "Use Perception modifier + DEX modifier"
+  },
+  "saving_throws": {
+    "description": "AD&D 2E has 5 saves, PF2E has 3",
+    "mappings": {
+      "Paralyzation/Poison/Death Magic": "Fortitude",
+      "Rod/Staff/Wand": "Reflex or Will (context dependent)",
+      "Petrification/Polymorph": "Fortitude",
+      "Breath Weapon": "Reflex",
+      "Spell": "Fortitude, Reflex, or Will (spell dependent)"
+    }
+  },
+  "dark_sun_considerations": {
+    "metal_weapons": {
+      "note": "Metal weapons are rare; most are bone, stone, or obsidian",
+      "damage_adjustment": "May need adjustment for material strength"
+    },
+    "psionics": {
+      "note": "Psionic combat uses different mechanics in both systems",
+      "mapping": "Requires custom conversion"
+    }
+  }
+}
+

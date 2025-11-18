@@ -92,7 +92,160 @@ def _span_text(span: dict) -> str:
     return ""
 
 
-def _structured_blocks(page_dict: dict) -> List[Block]:
+def _detect_columns(blocks: List[Block], page_width: float) -> int:
+    """Detect if page has multiple columns based on block distribution.
+    
+    Args:
+        blocks: List of blocks to analyze
+        page_width: Width of the page
+        
+    Returns:
+        Number of columns detected (1 or 2)
+    """
+    # Get X-coordinates of text blocks
+    text_blocks = [b for b in blocks if b.type == "text" and b.lines]
+    if len(text_blocks) < 4:
+        return 1
+    
+    # Calculate horizontal center of each block
+    block_centers = [(b.bbox[0] + b.bbox[2]) / 2 for b in text_blocks]
+    
+    # Find the median center position
+    sorted_centers = sorted(block_centers)
+    median_center = sorted_centers[len(sorted_centers) // 2]
+    
+    # Count blocks significantly left vs right of page center
+    page_center = page_width / 2
+    left_blocks = sum(1 for c in block_centers if c < page_center - 30)
+    right_blocks = sum(1 for c in block_centers if c > page_center + 30)
+    
+    # If we have significant blocks on both sides, it's two columns
+    if left_blocks >= 2 and right_blocks >= 2:
+        return 2
+    
+    return 1
+
+
+def _sort_blocks_by_columns(blocks: List[Block], page_width: float) -> List[Block]:
+    """Sort blocks for proper reading order, handling multi-column layouts.
+    
+    Args:
+        blocks: List of blocks to sort
+        page_width: Width of the page
+        
+    Returns:
+        Sorted list of blocks
+    """
+    if not blocks:
+        return blocks
+    
+    # Detect number of columns
+    num_columns = _detect_columns(blocks, page_width)
+    
+    if num_columns == 1:
+        # Single column: sort by Y-position (top to bottom)
+        return sorted(blocks, key=lambda b: b.bbox[1])
+    
+    # Two columns: sort by column first, then Y-position
+    page_center = page_width / 2
+    
+    # Separate blocks into left and right columns
+    left_column = []
+    right_column = []
+    
+    for block in blocks:
+        # Use the horizontal center of the block to determine column
+        block_center_x = (block.bbox[0] + block.bbox[2]) / 2
+        
+        if block_center_x < page_center:
+            left_column.append(block)
+        else:
+            right_column.append(block)
+    
+    # Sort each column by Y-position (top to bottom)
+    left_column.sort(key=lambda b: b.bbox[1])
+    right_column.sort(key=lambda b: b.bbox[1])
+    
+    # Concatenate: left column first, then right column
+    return left_column + right_column
+
+
+def _split_multicolumn_blocks(blocks: List[Block], page_width: float) -> List[Block]:
+    """Split blocks that span multiple columns into separate blocks.
+    
+    PyMuPDF sometimes groups lines from different columns into the same block.
+    This function splits such blocks so each resulting block contains only lines
+    from a single column.
+    
+    Args:
+        blocks: List of blocks to process
+        page_width: Width of the page
+        
+    Returns:
+        List of blocks with multi-column blocks split
+    """
+    result: List[Block] = []
+    page_center = page_width / 2
+    
+    for block in blocks:
+        if block.type != "text" or not block.lines:
+            result.append(block)
+            continue
+        
+        # Check if block has lines in both columns
+        left_lines = []
+        right_lines = []
+        
+        for line in block.lines:
+            line_center_x = (line.bbox[0] + line.bbox[2]) / 2
+            if line_center_x < page_center:
+                left_lines.append(line)
+            else:
+                right_lines.append(line)
+        
+        # If block only has lines in one column, keep it as is
+        if not left_lines or not right_lines:
+            result.append(block)
+            continue
+        
+        # Split into two blocks - one for each column
+        if left_lines:
+            # Calculate bbox for left block
+            left_x0 = min(line.bbox[0] for line in left_lines)
+            left_y0 = min(line.bbox[1] for line in left_lines)
+            left_x1 = max(line.bbox[2] for line in left_lines)
+            left_y1 = max(line.bbox[3] for line in left_lines)
+            result.append(Block(
+                bbox=[left_x0, left_y0, left_x1, left_y1],
+                type="text",
+                lines=left_lines
+            ))
+        
+        if right_lines:
+            # Calculate bbox for right block
+            right_x0 = min(line.bbox[0] for line in right_lines)
+            right_y0 = min(line.bbox[1] for line in right_lines)
+            right_x1 = max(line.bbox[2] for line in right_lines)
+            right_y1 = max(line.bbox[3] for line in right_lines)
+            result.append(Block(
+                bbox=[right_x0, right_y0, right_x1, right_y1],
+                type="text",
+                lines=right_lines
+            ))
+    
+    return result
+
+
+def _structured_blocks(page_dict: dict, page_width: float = 612.0) -> List[Block]:
+    """Extract and sort blocks from page dictionary.
+    
+    Args:
+        page_dict: Raw page dictionary from PyMuPDF
+        page_width: Width of the page for column detection
+        
+    Returns:
+        Sorted list of blocks in reading order
+    """
     structured_blocks: List[Block] = []
     for block in page_dict.get("blocks", []):
         block_type = block.get("type", 0)
@@ -128,7 +281,12 @@ def _structured_blocks(page_dict: dict) -> List[Block]:
             structured_blocks.append(Block(bbox=bbox, type="image", image=image))
         else:
             structured_blocks.append(Block(bbox=bbox, type="vector"))
-    return structured_blocks
+    
+    # Split blocks that span multiple columns
+    structured_blocks = _split_multicolumn_blocks(structured_blocks, page_width)
+    
+    # Sort blocks by columns for proper reading order
+    return _sort_blocks_by_columns(structured_blocks, page_width)
 
 
 def _structured_tables(plumber_page, *, table_settings: Dict[str, object]) -> List[Table]:
@@ -174,7 +332,8 @@ def _extract_structured_section(
         page = doc[page_number - 1]
         plumber_page = plumber_doc.pages[page_number - 1]
         raw_dict = page.get_text("rawdict")
-        blocks = _structured_blocks(raw_dict)
+        # Pass page width for column detection and sorting
+        blocks = _structured_blocks(raw_dict, page_width=page.rect.width)
         tables = _structured_tables(plumber_page, table_settings=table_settings)
         pages.append(
             Page(

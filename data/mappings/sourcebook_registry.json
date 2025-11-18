@@ -1,0 +1,87 @@
+{
+  "name": "AD&D 2E Sourcebook Registry",
+  "description": "Registry of AD&D 2E sourcebooks to process for rules extraction",
+  "version": "1.0.0",
+  "sourcebooks": [
+    {
+      "id": "dmg_revised",
+      "title": "Dungeon Master Guide (Revised)",
+      "filename": "Dungeon Master Guide Revised.pdf",
+      "priority": 1,
+      "extract_rules": [
+        "ability_scores",
+        "saves",
+        "combat",
+        "thac0",
+        "armor_class",
+        "proficiencies",
+        "experience"
+      ],
+      "notes": "Primary source for core AD&D 2E rules"
+    },
+    {
+      "id": "dmg_premium",
+      "title": "Dungeon Master Guide (Revised Premium Edition)",
+      "filename": "Dungeon Master Guide Revised  (Premium Edition).pdf",
+      "priority": 2,
+      "extract_rules": [],
+      "notes": "Backup source, same content as revised"
+    },
+    {
+      "id": "dmg_original",
+      "title": "Dungeon Master Guide (Original)",
+      "filename": "Dungeon Master Guide.pdf",
+      "priority": 3,
+      "extract_rules": [],
+      "notes": "Reference for rule variations"
+    },
+    {
+      "id": "phb_revised",
+      "title": "Player's Handbook (Revised)",
+      "filename": "Player's Handbook Revised.pdf",
+      "priority": 1,
+      "extract_rules": [
+        "classes",
+        "spells",
+        "equipment",
+        "races"
+      ],
+      "notes": "Primary source for player rules"
+    },
+    {
+      "id": "phb_premium",
+      "title": "Player's Handbook (Revised Premium Edition)",
+      "filename": "Player's Handbook Revised  (Premium Edition).pdf",
+      "priority": 2,
+      "extract_rules": [],
+      "notes": "Backup source, same content as revised"
+    },
+    {
+      "id": "phb_original",
+      "title": "Player's Handbook (Original)",
+      "filename": "Player's Handbook.pdf",
+      "priority": 3,
+      "extract_rules": [],
+      "notes": "Reference for rule variations"
+    },
+    {
+      "id": "dark_sun",
+      "title": "Dark Sun Campaign Setting",
+      "filename": "tsr02400_-_ADD_Setting_-_Dark_Sun_Box_Set_Original.pdf",
+      "priority": 1,
+      "extract_rules": [
+        "setting_specific_classes",
+        "setting_specific_races",
+        "psionics",
+        "defiling_magic"
+      ],
+      "notes": "Source material being converted"
+    }
+  ],
+  "extraction_order": [
+    "dmg_revised",
+    "phb_revised",
+    "dark_sun"
+  ]
+}
+

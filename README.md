@@ -39,6 +39,22 @@ pip install -r requirements.txt
 
 See `docs/pipeline_overview.md` for full details, mapping guidelines, and QA steps.
 
+## Documentation
+
+### Core Specs
+- `SPEC.md` - Pipeline domain model and architecture
+- `RULES.md` - Project rules and processing guidelines  
+- `docs/pipeline_overview.md` - Complete pipeline guide
+
+### Chapter-Specific Processing
+- `docs/chapter_processing_index.md` - Index of all chapter processing
+- `docs/chapter_2_processing_spec.md` - Chapter 2 (Races) detailed spec
+
+### Status & Summaries
+- `PIPELINE_IMPLEMENTATION_COMPLETE.md` - Implementation summary
+- `HTML_EXPORT_COMPLETE.md` - HTML export documentation
+- `HTML_POST_PROCESSING_COMPLETE.md` - HTML post-processing migration
+
 ## Foundry VTT Module
 
 - Manifest: `module.json`

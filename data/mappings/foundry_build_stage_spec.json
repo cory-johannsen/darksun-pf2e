@@ -1,0 +1,53 @@
+{
+  "name": "foundry_build",
+  "description": "Foundry VTT module and compendium build stage specifications",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "compendium_generation",
+      "description": "Generate Foundry compendium databases",
+      "processor_spec": {
+        "name": "CompendiumBuildProcessor",
+        "description": "Builds Foundry .db files from processed data",
+        "module_path": "tools.pdf_pipeline.stages.foundry_build",
+        "class_name": "CompendiumBuildProcessor",
+        "config": {
+          "foundry_version": 13,
+          "system": "pf2e",
+          "compress": true
+        }
+      },
+      "input_dir": "data/pf2e_converted",
+      "output_dir": "packs"
+    },
+    {
+      "name": "module_metadata",
+      "description": "Generate or update module.json",
+      "processor_spec": {
+        "name": "ModuleMetadataProcessor",
+        "description": "Creates module.json with correct metadata",
+        "module_path": "tools.pdf_pipeline.stages.foundry_build",
+        "class_name": "ModuleMetadataProcessor",
+        "config": {
+          "module_id": "darksun-pf2e",
+          "title": "Dark Sun for PF2E",
+          "version": "1.0.0",
+          "compatibility": {
+            "minimum": "13",
+            "verified": "13"
+          }
+        }
+      },
+      "input_dir": null,
+      "output_dir": "."
+    }
+  ],
+  "input": {
+    "converted_dir": "data/pf2e_converted"
+  },
+  "output": {
+    "packs_dir": "packs",
+    "module_json": "module.json"
+  }
+}
+

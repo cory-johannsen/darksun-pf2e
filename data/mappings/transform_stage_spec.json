@@ -1,0 +1,61 @@
+{
+  "name": "transform",
+  "description": "Raw to processed HTML transformation stage specifications",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "journal_transformation",
+      "description": "Transform raw sections to formatted HTML journals",
+      "processor_spec": {
+        "name": "JournalTransformProcessor",
+        "description": "Converts raw PDF sections to HTML with TOC",
+        "module_path": "tools.pdf_pipeline.stages.transform",
+        "class_name": "JournalTransformProcessor",
+        "config": {
+          "generate_toc": true,
+          "preserve_tables": true,
+          "format_headings": true
+        }
+      },
+      "postprocessor_spec": {
+        "name": "HTMLExportPostProcessor",
+        "description": "Exports journal JSON to standalone HTML files",
+        "module_path": "tools.pdf_pipeline.postprocessors.html_export",
+        "class_name": "HTMLExportPostProcessor",
+        "config": {
+          "input_dir": "data/processed/journals",
+          "output_dir": "data/html_output",
+          "title_prefix": "Dark Sun - "
+        }
+      },
+      "input_dir": "data/raw_structured/sections",
+      "output_dir": "data/processed/journals"
+    },
+    {
+      "name": "ancestry_transformation",
+      "description": "Transform race sections to ancestry data",
+      "processor_spec": {
+        "name": "AncestryTransformProcessor",
+        "description": "Extracts ancestry data from race chapters",
+        "module_path": "tools.pdf_pipeline.stages.transform",
+        "class_name": "AncestryTransformProcessor",
+        "config": {
+          "mapping_file": "data/mappings/ancestries.json",
+          "extract_traits": true,
+          "extract_abilities": true
+        }
+      },
+      "input_dir": "data/raw_structured/sections",
+      "output_dir": "data/processed"
+    }
+  ],
+  "input": {
+    "sections_dir": "data/raw_structured/sections",
+    "profiles": "data/mappings/section_profiles.json"
+  },
+  "output": {
+    "journals_dir": "data/processed/journals",
+    "ancestries_file": "data/processed/ancestries.json"
+  }
+}
+

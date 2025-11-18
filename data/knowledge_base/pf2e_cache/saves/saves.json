@@ -1,0 +1,38 @@
+{
+  "query": "saves",
+  "category": "saves",
+  "results": [
+    {
+      "save_type": "Fortitude",
+      "ability": "CON",
+      "description": "Fortitude saves represent your ability to withstand physical punishment",
+      "critical_success": null,
+      "success": null,
+      "failure": null,
+      "critical_failure": null,
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "save_type": "Reflex",
+      "ability": "DEX",
+      "description": "Reflex saves represent your ability to dodge and evade",
+      "critical_success": null,
+      "success": null,
+      "failure": null,
+      "critical_failure": null,
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "save_type": "Will",
+      "ability": "WIS",
+      "description": "Will saves represent your mental fortitude",
+      "critical_success": null,
+      "success": null,
+      "failure": null,
+      "critical_failure": null,
+      "source": "PF2E Core Rulebook"
+    }
+  ],
+  "timestamp": "2025-11-17T23:55:58.596407",
+  "source": "p2fe"
+}

@@ -1,0 +1,44 @@
+{
+  "query": "ability_scores",
+  "category": "ability_scores",
+  "results": [
+    {
+      "ability": "STR",
+      "modifier": 0,
+      "description": "STR represents physical power",
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "ability": "DEX",
+      "modifier": 0,
+      "description": "DEX represents agility and reflexes",
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "ability": "CON",
+      "modifier": 0,
+      "description": "CON represents hardiness and health",
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "ability": "INT",
+      "modifier": 0,
+      "description": "INT represents reasoning and memory",
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "ability": "WIS",
+      "modifier": 0,
+      "description": "WIS represents awareness and intuition",
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "ability": "CHA",
+      "modifier": 0,
+      "description": "CHA represents force of personality",
+      "source": "PF2E Core Rulebook"
+    }
+  ],
+  "timestamp": "2025-11-17T23:55:58.595398",
+  "source": "p2fe"
+}

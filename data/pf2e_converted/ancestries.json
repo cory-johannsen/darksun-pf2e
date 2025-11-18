@@ -1,0 +1,380 @@
+{
+  "slug": "chapter-two-player-character-races",
+  "transformer": "ancestries",
+  "source_section": "Chapter Two: Player Character Races",
+  "data": {
+    "entities": [
+      {
+        "name": "Athasian Dwarf",
+        "slug": "athasian-dwarf",
+        "source_section": "Chapter Two: Player Character Races",
+        "source_pages": [
+          5,
+          20
+        ],
+        "description": "",
+        "pf2e": {
+          "size": "medium",
+          "hit_points": 10,
+          "speed": 20,
+          "languages": [
+            "Athasian",
+            "Dwarven"
+          ],
+          "traits": [
+            "dwarf",
+            "humanoid",
+            "dark-sun"
+          ],
+          "boosts": [
+            "constitution",
+            "strength",
+            "free"
+          ],
+          "flaws": [
+            "charisma"
+          ],
+          "ability_mods": {
+            "str": 1,
+            "con": 2,
+            "dex": -1,
+            "cha": -2
+          },
+          "heritages": [],
+          "additional_features": []
+        },
+        "metadata": {
+          "aliases": [
+            "Dwarves",
+            "Dwarf"
+          ],
+          "notes": "Work-obsessed dwarves with innate focus."
+        }
+      },
+      {
+        "name": "Athasian Elf",
+        "slug": "athasian-elf",
+        "source_section": "Chapter Two: Player Character Races",
+        "source_pages": [
+          5,
+          20
+        ],
+        "description": "",
+        "pf2e": {
+          "size": "medium",
+          "hit_points": 8,
+          "speed": 30,
+          "languages": [
+            "Athasian",
+            "Elven"
+          ],
+          "traits": [
+            "elf",
+            "humanoid",
+            "dark-sun"
+          ],
+          "boosts": [
+            "dexterity",
+            "intelligence",
+            "free"
+          ],
+          "flaws": [
+            "constitution"
+          ],
+          "ability_mods": {
+            "dex": 2,
+            "int": 1,
+            "wis": -1,
+            "con": -2
+          },
+          "heritages": [],
+          "additional_features": []
+        },
+        "metadata": {
+          "aliases": [
+            "Elves",
+            "Elf"
+          ],
+          "notes": "Nomadic desert runners and traders."
+        }
+      },
+      {
+        "name": "Athasian Half-Elf",
+        "slug": "athasian-half-elf",
+        "source_section": "Chapter Two: Player Character Races",
+        "source_pages": [
+          5,
+          20
+        ],
+        "description": "",
+        "pf2e": {
+          "size": "medium",
+          "hit_points": 8,
+          "speed": 25,
+          "languages": [
+            "Athasian"
+          ],
+          "traits": [
+            "half-elf",
+            "humanoid",
+            "dark-sun"
+          ],
+          "boosts": [
+            "dexterity",
+            "free"
+          ],
+          "flaws": [
+            "constitution"
+          ],
+          "ability_mods": {
+            "dex": 1,
+            "con": -1
+          },
+          "heritages": [],
+          "additional_features": []
+        },
+        "metadata": {
+          "aliases": [
+            "Half-elves",
+            "Half-Elf"
+          ],
+          "notes": "Self-reliant wanderers born of intolerance."
+        }
+      },
+      {
+        "name": "Half-Giant",
+        "slug": "half-giant",
+        "source_section": "Chapter Two: Player Character Races",
+        "source_pages": [
+          5,
+          20
+        ],
+        "description": "",
+        "pf2e": {
+          "size": "large",
+          "hit_points": 14,
+          "speed": 25,
+          "languages": [
+            "Athasian",
+            "Giant"
+          ],
+          "traits": [
+            "giant",
+            "humanoid",
+            "dark-sun"
+          ],
+          "boosts": [
+            "strength",
+            "constitution",
+            "free"
+          ],
+          "flaws": [
+            "intelligence",
+            "wisdom",
+            "charisma"
+          ],
+          "ability_mods": {
+            "str": 4,
+            "con": 2,
+            "int": -2,
+            "wis": -2,
+            "cha": -2
+          },
+          "heritages": [],
+          "additional_features": []
+        },
+        "metadata": {
+          "aliases": [
+            "Half-giants",
+            "Half-Giant"
+          ],
+          "notes": "Massive mercenaries influenced by peers."
+        }
+      },
+      {
+        "name": "Athasian Halfling",
+        "slug": "athasian-halfling",
+        "source_section": "Chapter Two: Player Character Races",
+        "source_pages": [
+          5,
+          20
+        ],
+        "description": "",
+        "pf2e": {
+          "size": "small",
+          "hit_points": 6,
+          "speed": 25,
+          "languages": [
+            "Athasian",
+            "Halfling"
+          ],
+          "traits": [
+            "halfling",
+            "humanoid",
+            "dark-sun"
+          ],
+          "boosts": [
+            "dexterity",
+            "wisdom",
+            "free"
+          ],
+          "flaws": [
+            "strength"
+          ],
+          "ability_mods": {
+            "dex": 2,
+            "wis": 2,
+            "con": -1,
+            "cha": -1,
+            "str": -2
+          },
+          "heritages": [],
+          "additional_features": []
+        },
+        "metadata": {
+          "aliases": [
+            "Halflings",
+            "Halfling"
+          ],
+          "notes": "Reclusive jungle dwellers with primal customs."
+        }
+      },
+      {
+        "name": "Athasian Human",
+        "slug": "athasian-human",
+        "source_section": "Chapter Two: Player Character Races",
+        "source_pages": [
+          5,
+          20
+        ],
+        "description": "",
+        "pf2e": {
+          "size": "medium",
+          "hit_points": 8,
+          "speed": 25,
+          "languages": [
+            "Athasian"
+          ],
+          "traits": [
+            "human",
+            "humanoid",
+            "dark-sun"
+          ],
+          "boosts": [
+            "free"
+          ],
+          "flaws": [],
+          "ability_mods": {},
+          "heritages": [],
+          "additional_features": []
+        },
+        "metadata": {
+          "aliases": [
+            "Humans",
+            "Human"
+          ],
+          "notes": "Versatile survivors shaped by harsh city-states."
+        }
+      },
+      {
+        "name": "Mul",
+        "slug": "mul",
+        "source_section": "Chapter Two: Player Character Races",
+        "source_pages": [
+          5,
+          20
+        ],
+        "description": "",
+        "pf2e": {
+          "size": "medium",
+          "hit_points": 12,
+          "speed": 25,
+          "languages": [
+            "Athasian"
+          ],
+          "traits": [
+            "mul",
+            "humanoid",
+            "dark-sun"
+          ],
+          "boosts": [
+            "strength",
+            "constitution",
+            "free"
+          ],
+          "flaws": [
+            "charisma"
+          ],
+          "ability_mods": {
+            "str": 2,
+            "con": 1,
+            "int": -1,
+            "cha": -2
+          },
+          "heritages": [],
+          "additional_features": []
+        },
+        "metadata": {
+          "aliases": [
+            "Muls",
+            "Mul"
+          ],
+          "notes": "Bred for labor, resilient and tireless."
+        }
+      },
+      {
+        "name": "Thri-Kreen",
+        "slug": "thri-kreen",
+        "source_section": "Chapter Two: Player Character Races",
+        "source_pages": [
+          5,
+          20
+        ],
+        "description": "",
+        "pf2e": {
+          "size": "medium",
+          "hit_points": 10,
+          "speed": 30,
+          "languages": [
+            "Thri-Kreen"
+          ],
+          "traits": [
+            "thri-kreen",
+            "humanoid",
+            "dark-sun"
+          ],
+          "boosts": [
+            "dexterity",
+            "wisdom",
+            "free"
+          ],
+          "flaws": [
+            "charisma"
+          ],
+          "ability_mods": {
+            "dex": 2,
+            "wis": 1,
+            "int": -1,
+            "cha": -2
+          },
+          "heritages": [],
+          "additional_features": []
+        },
+        "metadata": {
+          "aliases": [
+            "Thri-kreen"
+          ],
+          "notes": "Mantis-folk hunters with pack instincts."
+        }
+      }
+    ],
+    "entity_type": "ancestry"
+  },
+  "conversion_applied": "semantic_mapping",
+  "pf2e_compatible": true,
+  "conversion_metadata": {
+    "preserve_flavor": true,
+    "dark_sun_context": true,
+    "mapping_results": []
+  }
+}

@@ -3,7 +3,7 @@
 ## Project goal
 The goal of the projecct is to iteratively design a pipeline that can read in an AD&D 2E modules (in PDF format) and perform a sequence of transformations that ultimately result in the conversion of the material into a Foundry VTT version 13 module using the Pathfinder 2E system.  The overall pipeline needs, at a minimum, the following transformations:
 1. Read source PDF and extract data
-1. Transform data to formatted HTML
+1. Transform data to formatted HTML saving the output for use during the user feedback stage
 1. Validate and verify transformations (automated test)
 1. Convert from AD&D 2E Rules to Pathfinder 2E Rules
 1. Generate Foundry module 
@@ -29,9 +29,9 @@ On the first iteration of the pipeline the specifications will be empty or minim
 
 - ProcessorSpec - A specification for a specific Processor to provides metadata and rules required for the Processor to function.  Examples are lookup tables for location mapping, text replacement for typos repairs, etc.
 
-- PostProcessor - A stage in a transformer that is attached to a Processor.  Performs secondary post-processing on the output of the Processor, using a specification to produce a final output.
+- PostProcessor - A stage in a transformer that is attached to a Processor.  Performs secondary post-processing on the output of the Processor, using a specification to produce a final output.  Examples: HTML export, table formatting, validation checks. Current implementation includes HTMLExportPostProcessor for generating styled HTML files.
 
-- PostProcessorSpec - A specification for a specific PostProcessor to provides metadata and rules required for the PostProcessor to function.  Examples are lookup tables for repositioning or reformatting mapping, text replacement, font manipulation, style changes, etc.
+- PostProcessorSpec - A specification for a specific PostProcessor to provides metadata and rules required for the PostProcessor to function.  Examples are lookup tables for repositioning or reformatting mapping, text replacement, font manipulation, style changes, HTML export configuration, etc. See `docs/chapter_processing_index.md` for chapter-specific postprocessing requirements.
 
 
 

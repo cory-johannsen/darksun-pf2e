@@ -1,0 +1,1300 @@
+{
+  "chapter": "Chapter 7 - Magic",
+  "spheres": {
+    "Sphere of Earth": [
+      {
+        "name": "Magical Stone",
+        "level": "1st",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 16
+      },
+      {
+        "name": "Dust Devil",
+        "level": "2nd",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 16
+      },
+      {
+        "name": "Meld Into Stone",
+        "level": "3rd",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 17
+      },
+      {
+        "name": "Stone Shape",
+        "level": "3rd",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 17
+      },
+      {
+        "name": "Conjure Elemental (Earth)",
+        "level": "5th",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 17
+      },
+      {
+        "name": "Spike Stones",
+        "level": "5th",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 18
+      },
+      {
+        "name": "Transmute Rock to Mud",
+        "level": "5th",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 19
+      },
+      {
+        "name": "Stone Tell",
+        "level": "6th",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 20
+      },
+      {
+        "name": "Transmute Water to Dust",
+        "level": "6th",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 21
+      },
+      {
+        "name": "Animate Rock",
+        "level": "7th",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 22
+      },
+      {
+        "name": "Earthquake",
+        "level": "7th",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 22
+      },
+      {
+        "name": "Transmute Metal to Wood",
+        "level": "7th",
+        "sphere": "Sphere of Earth",
+        "page": 0,
+        "block": 23
+      }
+    ],
+    "Sphere of Air": [
+      {
+        "name": "Dust Devil",
+        "level": "2nd",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 25
+      },
+      {
+        "name": "Call Lightning",
+        "level": "3rd",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 25
+      },
+      {
+        "name": "Control Temperature, 10' Radius",
+        "level": "4th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 26
+      },
+      {
+        "name": "Radius",
+        "level": "4th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 26
+      },
+      {
+        "name": "Protection From Lightning",
+        "level": "4th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 27
+      },
+      {
+        "name": "Air Walk",
+        "level": "5th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 27
+      },
+      {
+        "name": "Conjure Elemental (Air)",
+        "level": "5th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 29
+      },
+      {
+        "name": "Control Winds",
+        "level": "5th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 30
+      },
+      {
+        "name": "Insect Plague",
+        "level": "5th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 31
+      },
+      {
+        "name": "Plane Shift",
+        "level": "5th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 31
+      },
+      {
+        "name": "Aerial Servant",
+        "level": "6th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 32
+      },
+      {
+        "name": "Weather Summoning",
+        "level": "6th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 33
+      },
+      {
+        "name": "Astral Spell",
+        "level": "7th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 33
+      },
+      {
+        "name": "Control Weather",
+        "level": "7th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 34
+      },
+      {
+        "name": "Wind Walk",
+        "level": "7th",
+        "sphere": "Sphere of Air",
+        "page": 0,
+        "block": 34
+      }
+    ],
+    "Sphere of Fire": [
+      {
+        "name": "Endure Heat/Endure Cold",
+        "level": "1st",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 36
+      },
+      {
+        "name": "Faerie Fire",
+        "level": "1st",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 36
+      },
+      {
+        "name": "Endure Cold",
+        "level": "1st",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 36
+      },
+      {
+        "name": "Fire Trap",
+        "level": "2nd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 37
+      },
+      {
+        "name": "Flame Blade",
+        "level": "2nd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 38
+      },
+      {
+        "name": "Heat Metal",
+        "level": "2nd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 38
+      },
+      {
+        "name": "Produce Flame",
+        "level": "2nd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 39
+      },
+      {
+        "name": "Resist Fire/Resist Cold",
+        "level": "2nd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 40
+      },
+      {
+        "name": "Flame Walk",
+        "level": "3rd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 40
+      },
+      {
+        "name": "Resist Cold",
+        "level": "2nd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 40
+      },
+      {
+        "name": "Protection From Fire",
+        "level": "3rd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 41
+      },
+      {
+        "name": "Pyrotechnics",
+        "level": "3rd",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 42
+      },
+      {
+        "name": "Produce Fire",
+        "level": "4th",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 42
+      },
+      {
+        "name": "Conjure Elemental (Fire)",
+        "level": "5th",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 43
+      },
+      {
+        "name": "Flame Strike",
+        "level": "5th",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 44
+      },
+      {
+        "name": "Wall of Fire",
+        "level": "5th",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 44
+      },
+      {
+        "name": "Fire Seeds",
+        "level": "6th",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 45
+      },
+      {
+        "name": "Chariot of Sustarre",
+        "level": "7th",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 46
+      },
+      {
+        "name": "Fire Storm",
+        "level": "7th",
+        "sphere": "Sphere of Fire",
+        "page": 0,
+        "block": 47
+      }
+    ],
+    "Sphere of Water": [
+      {
+        "name": "Create Water",
+        "level": "1st",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 49
+      },
+      {
+        "name": "Purify Food & Drink",
+        "level": "1st",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 50
+      },
+      {
+        "name": "Create Food & Water",
+        "level": "3rd",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 51
+      },
+      {
+        "name": "Water Breathing",
+        "level": "3rd",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 51
+      },
+      {
+        "name": "Water Walk",
+        "level": "3rd",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 52
+      },
+      {
+        "name": "Lower Water",
+        "level": "4th",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 53
+      },
+      {
+        "name": "Reflecting Pool",
+        "level": "4th",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 53
+      },
+      {
+        "name": "Conjure Elemental (Water)",
+        "level": "5th",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 54
+      },
+      {
+        "name": "Magic Font",
+        "level": "5th",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 55
+      },
+      {
+        "name": "Part Water",
+        "level": "6th",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 55
+      },
+      {
+        "name": "Transmute Water to Dust",
+        "level": "6th",
+        "sphere": "Sphere of Water",
+        "page": 0,
+        "block": 56
+      }
+    ],
+    "Sphere of the Cosmos": [
+      {
+        "name": "Animal Friendship",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 1
+      },
+      {
+        "name": "Bless",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 2
+      },
+      {
+        "name": "Combine",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 3
+      },
+      {
+        "name": "Cure Light Wounds",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 4
+      },
+      {
+        "name": "Command",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 4
+      },
+      {
+        "name": "Detect Evil",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 5
+      },
+      {
+        "name": "Detect Magic",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 6
+      },
+      {
+        "name": "Detect Poison",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 6
+      },
+      {
+        "name": "Detect Snares & Pits",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 7
+      },
+      {
+        "name": "Entangle",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 8
+      },
+      {
+        "name": "Invisibility to Animals",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 8
+      },
+      {
+        "name": "Invisibility to Undead",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 9
+      },
+      {
+        "name": "Light",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 10
+      },
+      {
+        "name": "Locate Animals or Plants",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 10
+      },
+      {
+        "name": "Pass Without Trace",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 11
+      },
+      {
+        "name": "Protection From Evil",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 12
+      },
+      {
+        "name": "Remove Fear",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 12
+      },
+      {
+        "name": "Sanctuary",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 13
+      },
+      {
+        "name": "Shillelagh",
+        "level": "1st",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 14
+      },
+      {
+        "name": "Aid",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 15
+      },
+      {
+        "name": "Augury",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 16
+      },
+      {
+        "name": "Barkskin",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 17
+      },
+      {
+        "name": "Chant",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 17
+      },
+      {
+        "name": "Charm Person or Mammal",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 18
+      },
+      {
+        "name": "Detect Charm",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 19
+      },
+      {
+        "name": "Enthrall",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 19
+      },
+      {
+        "name": "Find Traps",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 20
+      },
+      {
+        "name": "Goodberry",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 21
+      },
+      {
+        "name": "Hold Person",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 21
+      },
+      {
+        "name": "Know Alignment",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 22
+      },
+      {
+        "name": "Messenger",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 23
+      },
+      {
+        "name": "Obscurement",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 23
+      },
+      {
+        "name": "Silence, 15' Radius",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 24
+      },
+      {
+        "name": "Radius",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 24
+      },
+      {
+        "name": "Slow Poison",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 25
+      },
+      {
+        "name": "Snake Charm",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 25
+      },
+      {
+        "name": "Speak With Animals",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 26
+      },
+      {
+        "name": "Spiritual Hammer",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 27
+      },
+      {
+        "name": "Trip",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 27
+      },
+      {
+        "name": "Warp Wood",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 28
+      },
+      {
+        "name": "Withdraw",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 29
+      },
+      {
+        "name": "Wyvern Watch",
+        "level": "2nd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 29
+      },
+      {
+        "name": "Animate Dead",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 30
+      },
+      {
+        "name": "Continual Light",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 31
+      },
+      {
+        "name": "Cure Blindness or Deafness",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 32
+      },
+      {
+        "name": "Cure Disease",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 32
+      },
+      {
+        "name": "Dispel Magic",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 33
+      },
+      {
+        "name": "Feign Death",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 34
+      },
+      {
+        "name": "Glyph of Warding",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 35
+      },
+      {
+        "name": "Hold Animal",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 36
+      },
+      {
+        "name": "Locate Object",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 37
+      },
+      {
+        "name": "Magical Vestment",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 37
+      },
+      {
+        "name": "Negative Plane Protection",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 38
+      },
+      {
+        "name": "Plant Growth",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 39
+      },
+      {
+        "name": "Prayer",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 40
+      },
+      {
+        "name": "Remove Curse",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 41
+      },
+      {
+        "name": "Remove Paralysis",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 42
+      },
+      {
+        "name": "Snare",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 42
+      },
+      {
+        "name": "Speak With Dead",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 43
+      },
+      {
+        "name": "Spike Growth",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 44
+      },
+      {
+        "name": "Starshine",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 44
+      },
+      {
+        "name": "Summon Insects",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 45
+      },
+      {
+        "name": "Tee",
+        "level": "3rd",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 46
+      },
+      {
+        "name": "Abjure",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 47
+      },
+      {
+        "name": "Animal Summoning 1",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 48
+      },
+      {
+        "name": "Call Woodland Beings",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 49
+      },
+      {
+        "name": "Cloak of Bravery",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 49
+      },
+      {
+        "name": "Cure Serious Wounds",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 50
+      },
+      {
+        "name": "Detect Lie",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 50
+      },
+      {
+        "name": "Divination",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 50
+      },
+      {
+        "name": "Free Action",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 51
+      },
+      {
+        "name": "Giant Insect",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 52
+      },
+      {
+        "name": "Hallucinatory Forest",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 53
+      },
+      {
+        "name": "Hold Plant",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 54
+      },
+      {
+        "name": "Imbue With Spell Ability",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 55
+      },
+      {
+        "name": "Neutralize Poison",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 55
+      },
+      {
+        "name": "Plant Door",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 56
+      },
+      {
+        "name": "Protection From Evil, 10' Radius",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 57
+      },
+      {
+        "name": "Repel Insects",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 57
+      },
+      {
+        "name": "Radius",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 57
+      },
+      {
+        "name": "Speak With Plants",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 58
+      },
+      {
+        "name": "Spell Immunity",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 59
+      },
+      {
+        "name": "Sticks to Snakes",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 59
+      },
+      {
+        "name": "Tongues",
+        "level": "4th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 60
+      },
+      {
+        "name": "Animal Growth",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": 2,
+        "block": 61
+      },
+      {
+        "name": "Animal Summoning II",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Anti-Plant Shell",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Atonement",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Commune",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Commune With Nature",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Cure Critical Wounds",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Dispel Evil",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Moonbeam",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Pass Plant",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Quest",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Rainbow",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Raise Dead",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "True Seeing",
+        "level": "5th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Animal Summoning III",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Animate Object",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Anti-Animal Shell",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Blade Barrier",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Conjure Animals",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Create Tree of Life",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Find the Path",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Heal",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Feast",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Liveoak",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Speak With Monsters",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Transport Via Plants",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Turn Wood",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Wall of Thorns",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Word of Recall",
+        "level": "6th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Changestaff",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Confusion",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Creeping Doom",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Exaction",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Gate",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Holy Word",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Regenerate",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Reincarnate",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Restoration",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Resurrection",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Succor",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Sunray",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      },
+      {
+        "name": "Symbol",
+        "level": "7th",
+        "sphere": "Sphere of the Cosmos",
+        "page": -1,
+        "block": -1
+      }
+    ]
+  },
+  "metadata": {
+    "total_spheres": 5,
+    "total_spells": 183
+  }
+}

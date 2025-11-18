@@ -1,0 +1,101 @@
+{
+  "name": "Class Feature Conversions",
+  "description": "Mappings for converting AD&D 2E classes to PF2E",
+  "version": "1.0.0",
+  "class_groups": {
+    "Warrior": {
+      "adnd_classes": ["Fighter", "Ranger", "Paladin", "Gladiator"],
+      "pf2e_analog": "Martial classes (Fighter, Ranger, Champion)",
+      "key_features": [
+        "High attack progression",
+        "Heavy armor proficiency",
+        "Multiple attacks at higher levels"
+      ]
+    },
+    "Wizard": {
+      "adnd_classes": ["Wizard", "Defiler", "Preserver"],
+      "pf2e_analog": "Wizard",
+      "key_features": [
+        "Arcane spellcasting",
+        "Spell schools",
+        "Limited armor"
+      ],
+      "dark_sun_variants": {
+        "Defiler": "Add defiling mechanics as variant",
+        "Preserver": "Standard wizard"
+      }
+    },
+    "Priest": {
+      "adnd_classes": ["Cleric", "Druid", "Elemental Cleric"],
+      "pf2e_analog": "Cleric, Druid",
+      "key_features": [
+        "Divine spellcasting",
+        "Turn undead",
+        "Sphere restrictions"
+      ],
+      "dark_sun_variants": {
+        "Elemental Cleric": "Serve elemental forces instead of gods"
+      }
+    },
+    "Rogue": {
+      "adnd_classes": ["Thief", "Bard"],
+      "pf2e_analog": "Rogue, Bard",
+      "key_features": [
+        "Skill expertise",
+        "Sneak attack",
+        "Special abilities"
+      ]
+    },
+    "Psionicist": {
+      "adnd_classes": ["Psionicist"],
+      "pf2e_analog": "Psychic (or custom class)",
+      "key_features": [
+        "Psionic powers",
+        "PSP (Psionic Strength Points)",
+        "Mental disciplines"
+      ],
+      "conversion_note": "Dark Sun psionics are extensive; may require custom PF2E implementation"
+    }
+  },
+  "hit_dice_conversion": {
+    "d4": 6,
+    "d6": 8,
+    "d8": 10,
+    "d10": 12,
+    "d12": 12
+  },
+  "attack_progression": {
+    "Warrior": "High progression (equivalent to PF2E Fighter)",
+    "Priest": "Medium progression (equivalent to PF2E Cleric)",
+    "Wizard": "Low progression (equivalent to PF2E Wizard)",
+    "Rogue": "Medium progression (equivalent to PF2E Rogue)"
+  },
+  "saving_throw_mapping": {
+    "note": "AD&D saving throw progressions map to PF2E proficiency ranks",
+    "strong_saves": "Expert or Master",
+    "weak_saves": "Trained"
+  },
+  "dark_sun_classes": {
+    "Gladiator": {
+      "base": "Fighter",
+      "special": "Arena combat expertise, weapon specialization",
+      "pf2e_analog": "Fighter with performance/intimidation focus"
+    },
+    "Defiler": {
+      "base": "Wizard",
+      "special": "Gains power by draining life force",
+      "pf2e_analog": "Wizard with custom defiling variant rules"
+    },
+    "Templar": {
+      "base": "Priest/Fighter multiclass",
+      "special": "Serves sorcerer-king, combines martial and divine power",
+      "pf2e_analog": "Cleric or Champion with authority/intimidation focus"
+    }
+  },
+  "multiclassing": {
+    "adnd": "Dual-class or multi-class with specific restrictions",
+    "pf2e": "Archetype system allows flexible multiclassing",
+    "conversion": "Use PF2E multiclass archetypes to represent AD&D multiclass combinations"
+  }
+}
+

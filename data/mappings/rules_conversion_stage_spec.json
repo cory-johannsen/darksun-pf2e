@@ -1,0 +1,41 @@
+{
+  "name": "rules_conversion",
+  "description": "AD&D 2E to Pathfinder 2E rules conversion stage specifications",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "adnd_to_pf2e_conversion",
+      "description": "Convert AD&D 2E rules to Pathfinder 2E equivalents",
+      "processor_spec": {
+        "name": "ADnDToPF2EProcessor",
+        "description": "Converts game mechanics from AD&D 2E to PF2E system",
+        "module_path": "tools.pdf_pipeline.stages.rules_conversion",
+        "class_name": "ADnDToPF2EProcessor",
+        "config": {
+          "conversion_tables": "data/mappings/adnd_to_pf2e_conversion.json",
+          "preserve_flavor": true,
+          "adjust_difficulty": true
+        }
+      },
+      "postprocessor_spec": {
+        "name": "RulesValidationPostProcessor",
+        "description": "Validates converted rules for PF2E compliance",
+        "module_path": "tools.pdf_pipeline.stages.rules_conversion",
+        "class_name": "RulesValidationPostProcessor",
+        "config": {
+          "check_balance": true,
+          "check_compatibility": true
+        }
+      },
+      "input_dir": "data/processed",
+      "output_dir": "data/pf2e_converted"
+    }
+  ],
+  "input": {
+    "processed_dir": "data/processed"
+  },
+  "output": {
+    "converted_dir": "data/pf2e_converted"
+  }
+}
+

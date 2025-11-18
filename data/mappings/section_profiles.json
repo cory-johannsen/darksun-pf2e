@@ -10,8 +10,69 @@
     "transformer": "journal",
     "output_dir": "journals",
     "skip_slugs": [
-      "chapter-two-player-character-races"
-    ]
+    ],
+    "config": {
+      "table_class": "ds-table",
+      "wrap_pages": false,
+      "paragraph_break_hints": {
+        "chapter-one-the-world-of-athas": [
+          "This is a land of blood",
+          "This is my home",
+          "From the first",
+          "A man cannot drink",
+          "The wind does",
+          "Breezes on",
+          "As dangerous",
+          "I have already",
+          "At night",
+          "As far I",
+          "Though the picture",
+          "Nevertheless,",
+          "Surrounding",
+          "This is where",
+          "The Tablelands",
+          "In every direction",
+          "The cities,",
+          "Villages are no",
+          "The dynastic",
+          "Nomadic",
+          "Wherever something",
+          "The primitive hunting",
+          "Hermits have",
+          "Still,",
+          "As incredible",
+          "Yet, the",
+          "Turning from",
+          "These ballads",
+          "Most Athasians",
+          "The world abounds",
+          "If you have",
+          "Like men,",
+          "Even the plants,",
+          "The essence",
+          "I have no idea",
+          "If we can discover the truth"
+          ],
+          "chapter-three-player-character-classes": [
+            "Replacing a fallen player character of high level",
+            "In DARK SUN campaigns, players are encour-",
+            "In brief, a character tree consists of one active",
+            "For example, one character tree might have",
+            "If a character is forced to change alignment",
+            "Discarded characters should be given to the",
+            "Every time the active character goes up a level of",
+            "For purposes of character tree advancement,",
+            "For inactive multi-class characters, care must be",
+            "When not in play, inactive characters are assumed",
+            "All characters in a character tree are assumed to",
+            "As only one inactive character gains a level of",
+            "As another example, the quest might",
+            "In some instances, if there is a compelling reason",
+            "DARK SUN",
+            "As stated in the"
+        ]
+      }
+    }
   }
 ]
 

@@ -1,0 +1,59 @@
+{
+  "name": "extract",
+  "description": "PDF extraction stage specifications",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "manifest_generation",
+      "description": "Generate manifest from PDF table of contents",
+      "processor_spec": {
+        "name": "ManifestProcessor",
+        "description": "Extracts TOC and generates section manifest",
+        "module_path": "tools.pdf_pipeline.stages.extract",
+        "class_name": "ManifestProcessor",
+        "config": {
+          "min_level": 2,
+          "extract_toc": true
+        }
+      },
+      "input_dir": null,
+      "output_dir": "data/raw"
+    },
+    {
+      "name": "section_extraction",
+      "description": "Extract sections from PDF based on manifest",
+      "processor_spec": {
+        "name": "SectionExtractionProcessor",
+        "description": "Extracts text and layout from PDF sections",
+        "module_path": "tools.pdf_pipeline.stages.extract",
+        "class_name": "SectionExtractionProcessor",
+        "config": {
+          "mode": "structured",
+          "extract_images": true,
+          "extract_tables": true
+        }
+      },
+      "postprocessor_spec": {
+        "name": "TableDetectionPostProcessor",
+        "description": "Detects and structures tables in extracted content",
+        "module_path": "tools.pdf_pipeline.stages.extract",
+        "class_name": "TableDetectionPostProcessor",
+        "config": {
+          "detect_headers": true,
+          "merge_cells": true
+        }
+      },
+      "input_dir": "data/raw",
+      "output_dir": "data/raw_structured/sections"
+    }
+  ],
+  "input": {
+    "pdf_path": "tsr02400_-_ADD_Setting_-_Dark_Sun_Box_Set_Original.pdf",
+    "manifest_path": "data/raw/pdf_manifest.json"
+  },
+  "output": {
+    "manifest_path": "data/raw/pdf_manifest.json",
+    "sections_dir": "data/raw_structured/sections"
+  }
+}
+

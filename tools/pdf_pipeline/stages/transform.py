@@ -7,18 +7,87 @@ following the domain model architecture.
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any, Dict, List
 
 from ..base import BaseProcessor
 from ..domain import ExecutionContext, ProcessorInput, ProcessorOutput
 from ..transformers import REGISTRY as TRANSFORMER_REGISTRY
+from ..utils.parallel import run_process_pool, should_parallelize, get_max_workers
+
+logger = logging.getLogger(__name__)
+
+
+def _transform_journal_task(task: Dict[str, Any]) -> Dict[str, Any]:
+    """Worker function to transform a single section to journal.
+    
+    Args:
+        task: Dict with section_file, output_file, slug, config, etc.
+        
+    Returns:
+        Dict with items, warnings, errors, and output_file
+    """
+    from pathlib import Path
+    import json
+    from ..transformers import REGISTRY as TRANSFORMER_REGISTRY
+    
+    section_file = Path(task["section_file"])
+    output_file = Path(task["output_file"])
+    slug = task["slug"]
+    config = task.get("config", {})
+    
+    warnings = []
+    errors = []
+    
+    try:
+        # Load section data
+        section_data = json.loads(section_file.read_text(encoding="utf-8"))
+        
+        # Get the journal transformer
+        journal_transformer = TRANSFORMER_REGISTRY.get("journal")
+        if not journal_transformer:
+            raise ValueError("journal transformer not found in registry")
+        
+        # Apply transformation
+        transformed = journal_transformer(section_data, config)
+        
+        # Write output
+        payload = {
+            "slug": slug,
+            "transformer": "journal",
+            "source_section": section_data.get("title"),
+            "data": transformed,
+        }
+        
+        output_file.write_text(
+            json.dumps(payload, indent=2, ensure_ascii=False),
+            encoding="utf-8"
+        )
+        
+        return {
+            "items": 1,
+            "warnings": warnings,
+            "errors": errors,
+            "output_file": str(output_file),
+        }
+    
+    except Exception as e:
+        error_msg = f"Failed to transform section {slug}: {e}"
+        errors.append(error_msg)
+        return {
+            "items": 0,
+            "warnings": warnings,
+            "errors": errors,
+            "output_file": None,
+        }
+
 
 
 class JournalTransformProcessor(BaseProcessor):
     """Processor for transforming raw sections to formatted HTML journals.
     
-    Wraps the existing journal_v2 transformer functionality.
+    Supports parallel transformation when enabled via config.
     """
     
     def process(self, input_data: ProcessorInput, context: ExecutionContext) -> ProcessorOutput:
@@ -36,65 +105,122 @@ class JournalTransformProcessor(BaseProcessor):
         output_dir = Path(self.config.get("output_dir", "data/processed/journals"))
         profiles_path = Path(self.config.get("profiles_path", "data/mappings/section_profiles.json"))
         
+        # Parallel config
+        global_parallel = context.metadata.get("parallel", False)
+        use_parallel = should_parallelize(self.config, global_parallel)
+        
         # Ensure output directory exists
         output_dir.mkdir(parents=True, exist_ok=True)
         
         # Load profiles
         profiles = json.loads(profiles_path.read_text(encoding="utf-8"))
         
-        # Get the journal transformer
-        journal_transformer = TRANSFORMER_REGISTRY.get("journal_v2")
-        if not journal_transformer:
-            raise ValueError("journal_v2 transformer not found in registry")
+        # Build task list
+        skip_slugs = set()
+        tasks = []
         
-        # Transform each section that uses journal_v2
-        transformed_files = []
         for profile in profiles:
-            if profile.get("transformer") != "journal_v2":
+            if profile.get("transformer") != "journal":
                 continue
             
-            slug = profile.get("slug")
-            if not slug:
-                continue
-            
-            # Find the section file
-            section_files = list(sections_dir.glob(f"*-{slug}.json"))
-            if not section_files:
-                context.warnings.append(f"Section file not found for slug: {slug}")
-                continue
-            
-            section_file = section_files[0]
-            section_data = json.loads(section_file.read_text(encoding="utf-8"))
-            
-            # Apply transformation
-            config = {}
+            # Get configuration
+            mapping_config = {}
             if mapping_path := profile.get("mapping"):
                 mapping_file = profiles_path.parent / mapping_path
                 if mapping_file.exists():
-                    config = json.loads(mapping_file.read_text(encoding="utf-8"))
+                    mapping_config = json.loads(mapping_file.read_text(encoding="utf-8"))
             
-            if additional_config := profile.get("config"):
-                config.update(additional_config)
+            additional_config = profile.get("config", {})
+            profile_skip_slugs = set(profile.get("skip_slugs", []))
+            skip_slugs.update(profile_skip_slugs)
             
-            transformed = journal_transformer(section_data, config)
+            # Handle profile with specific slug
+            if "slug" in profile:
+                slug = profile["slug"]
+                if slug in skip_slugs:
+                    continue
+                    
+                # Find the section file
+                section_files = list(sections_dir.glob(f"*-{slug}.json"))
+                if not section_files:
+                    context.warnings.append(f"Section file not found for slug: {slug}")
+                    continue
+                
+                section_file = section_files[0]
+                output_name = profile.get("output_template", "{slug}.json").format(slug=slug)
+                output_file = output_dir / output_name
+                
+                config = {**mapping_config, **additional_config}
+                task = {
+                    "section_file": str(section_file),
+                    "output_file": str(output_file),
+                    "slug": slug,
+                    "config": config,
+                }
+                tasks.append(task)
             
-            # Write output
-            output_name = profile.get("output_template", "{slug}.json").format(slug=slug)
-            output_file = output_dir / output_name
+            # Handle profile with glob pattern
+            elif "glob" in profile:
+                glob_pattern = profile["glob"]
+                for section_file in sorted(sections_dir.glob(glob_pattern)):
+                    # Load section data to get slug
+                    try:
+                        section_data = json.loads(section_file.read_text(encoding="utf-8"))
+                        slug = section_data.get("slug")
+                        
+                        if not slug:
+                            context.warnings.append(f"Section file {section_file.name} missing slug")
+                            continue
+                        
+                        if slug in skip_slugs:
+                            continue
+                        
+                        output_name = profile.get("output_template", "{slug}.json").format(slug=slug)
+                        output_file = output_dir / output_name
+                        
+                        config = {**mapping_config, **additional_config}
+                        task = {
+                            "section_file": str(section_file),
+                            "output_file": str(output_file),
+                            "slug": slug,
+                            "config": config,
+                        }
+                        tasks.append(task)
+                    except Exception as e:
+                        context.warnings.append(f"Failed to read {section_file.name}: {e}")
+                        continue
+        
+        # Transform (parallel or sequential)
+        transformed_files = []
+        if use_parallel and len(tasks) > 1:
+            max_workers = get_max_workers(self.config, default=4)
+            chunksize = int(self.config.get("chunksize", 1))
             
-            payload = {
-                "slug": slug,
-                "transformer": "journal_v2",
-                "source_section": section_data.get("title"),
-                "data": transformed,
-            }
-            
-            output_file.write_text(
-                json.dumps(payload, indent=2, ensure_ascii=False),
-                encoding="utf-8"
+            logger.info(f"Transforming {len(tasks)} sections in parallel with {max_workers} workers")
+            result = run_process_pool(
+                tasks,
+                _transform_journal_task,
+                max_workers=max_workers,
+                chunksize=chunksize,
+                desc="journal transformation"
             )
-            transformed_files.append(str(output_file))
-            context.items_processed += 1
+            
+            context.items_processed = result["items_processed"]
+            context.warnings.extend(result["warnings"])
+            context.errors.extend(result["errors"])
+            transformed_files = sorted([r["output_file"] for r in result["results"] if r.get("output_file")])
+        
+        else:
+            # Sequential transformation
+            logger.info(f"Transforming {len(tasks)} sections sequentially")
+            for task in tasks:
+                result = _transform_journal_task(task)
+                context.items_processed += result["items"]
+                context.warnings.extend(result["warnings"])
+                context.errors.extend(result["errors"])
+                if result.get("output_file"):
+                    transformed_files.append(result["output_file"])
+            transformed_files = sorted(transformed_files)
         
         return ProcessorOutput(
             data={
@@ -103,8 +229,10 @@ class JournalTransformProcessor(BaseProcessor):
             },
             metadata={
                 "file_count": len(transformed_files),
+                "parallel": use_parallel,
             }
         )
+
 
 
 class AncestryTransformProcessor(BaseProcessor):

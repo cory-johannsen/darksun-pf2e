@@ -1,0 +1,42 @@
+{
+  "name": "Ability Score Conversions",
+  "description": "Mappings for converting AD&D 2E ability scores to PF2E modifiers",
+  "version": "1.0.0",
+  "conversion_table": {
+    "3": -4,
+    "4-5": -3,
+    "6-7": -2,
+    "8-9": -1,
+    "10-11": 0,
+    "12-13": 1,
+    "14-15": 2,
+    "16-17": 3,
+    "18": 4,
+    "19": 4,
+    "20": 5,
+    "21": 5,
+    "22": 6,
+    "23": 6,
+    "24": 7,
+    "25": 7
+  },
+  "exceptional_strength": {
+    "description": "AD&D 2E exceptional strength (18/xx) conversions",
+    "18/01-18/50": 4,
+    "18/51-18/75": 5,
+    "18/76-18/90": 5,
+    "18/91-18/99": 6,
+    "18/00": 6
+  },
+  "dark_sun_modifiers": {
+    "CON": {
+      "bonus": 0,
+      "note": "Dark Sun natives may receive CON bonuses due to harsh environment"
+    },
+    "WIS": {
+      "bonus": 0,
+      "note": "WIS affects psionic abilities in Dark Sun"
+    }
+  }
+}
+

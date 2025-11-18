@@ -1,0 +1,29 @@
+{
+  "slug": "chapter-thirteen-vision-and-light",
+  "transformer": "journal",
+  "source_section": "Chapter Thirteen: Vision and Light",
+  "data": {
+    "entity_type": "journal",
+    "slug": "chapter-thirteen-vision-and-light",
+    "title": "Chapter Thirteen: Vision and Light",
+    "content": "<nav id=\"table-of-contents\">\n<h2>Table of Contents</h2>\n<ul>\n<li><a href=\"#header-0-limits-of-vision\">Limits of Vision</a></li><li><a href=\"#header-1-dark-sun-visibility-ranges\">Dark Sun Visibility Ranges</a></li>\n</ul>\n</nav>\n<a id=\"top\"></a><p id=\"header-0-limits-of-vision\" class=\"h1-header\">I.  <a href=\"#top\" style=\"font-size: 0.8em; text-decoration: none;\">[^]</a> <span style=\"color: #ca5804\">Limits of Vision</span></p><p id=\"header-1-dark-sun-visibility-ranges\" class=\"h1-header\">II.  <a href=\"#top\" style=\"font-size: 0.8em; text-decoration: none;\">[^]</a> <span style=\"color: #ca5804\">Dark Sun Visibility Ranges</span></p><p>All of the conditions presented on the Visibility Ranges table in thePlayer&#x27;s Handbookexist on Athas. However, there are a number of conditions unique to Athas that should be added.</p>",
+    "source_pages": [
+      86,
+      86
+    ],
+    "metadata": {
+      "parent_slugs": [
+        "table-of-contents-rules-book"
+      ],
+      "level": 2,
+      "layout": "structured"
+    }
+  },
+  "conversion_applied": "semantic_mapping",
+  "pf2e_compatible": true,
+  "conversion_metadata": {
+    "preserve_flavor": true,
+    "dark_sun_context": true,
+    "mapping_results": []
+  }
+}

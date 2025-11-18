@@ -1,0 +1,136 @@
+{
+  "query": "skills",
+  "category": "skills",
+  "results": [
+    {
+      "name": "Acrobatics",
+      "ability": "DEX",
+      "description": "Acrobatics skill based on DEX",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Arcana",
+      "ability": "INT",
+      "description": "Arcana skill based on INT",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Athletics",
+      "ability": "STR",
+      "description": "Athletics skill based on STR",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Crafting",
+      "ability": "INT",
+      "description": "Crafting skill based on INT",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Deception",
+      "ability": "CHA",
+      "description": "Deception skill based on CHA",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Diplomacy",
+      "ability": "CHA",
+      "description": "Diplomacy skill based on CHA",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Intimidation",
+      "ability": "CHA",
+      "description": "Intimidation skill based on CHA",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Medicine",
+      "ability": "WIS",
+      "description": "Medicine skill based on WIS",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Nature",
+      "ability": "WIS",
+      "description": "Nature skill based on WIS",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Occultism",
+      "ability": "INT",
+      "description": "Occultism skill based on INT",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Performance",
+      "ability": "CHA",
+      "description": "Performance skill based on CHA",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Religion",
+      "ability": "WIS",
+      "description": "Religion skill based on WIS",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Society",
+      "ability": "INT",
+      "description": "Society skill based on INT",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Stealth",
+      "ability": "DEX",
+      "description": "Stealth skill based on DEX",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Survival",
+      "ability": "WIS",
+      "description": "Survival skill based on WIS",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    },
+    {
+      "name": "Thievery",
+      "ability": "DEX",
+      "description": "Thievery skill based on DEX",
+      "untrained_actions": [],
+      "trained_actions": [],
+      "source": "PF2E Core Rulebook"
+    }
+  ],
+  "timestamp": "2025-11-17T23:55:58.596673",
+  "source": "p2fe"
+}

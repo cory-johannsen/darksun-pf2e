@@ -6,11 +6,14 @@ a formal class hierarchy for Pipeline → Transformer → TransformerStage → P
 
 from __future__ import annotations
 
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field
+
+logger = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -352,18 +355,27 @@ class Transformer:
         stage_results: List[StageResult] = []
         current_input = input_data
         
-        for stage in self.stages:
+        total_stages = len(self.stages)
+        logger.info(f"Transformer '{self.name}' starting ({total_stages} stages)")
+        
+        for stage_num, stage in enumerate(self.stages, 1):
+            logger.info(f"  Stage {stage_num}/{total_stages}: {stage.spec.name}")
             result = stage.transform(current_input, context)
             stage_results.append(result)
             
             if not result.success:
                 # Stage failed
+                logger.error(f"  Stage {stage_num}/{total_stages}: {stage.spec.name} FAILED")
                 return TransformerResult(
                     transformer_name=self.name,
                     success=False,
                     stage_results=stage_results,
                     context=context,
                 )
+            
+            # Log completion with item count if available
+            items_msg = f" ({result.context.items_processed} items)" if result.context.items_processed > 0 else ""
+            logger.info(f"  Stage {stage_num}/{total_stages}: {stage.spec.name} completed{items_msg}")
             
             # Pass output to next stage
             if result.output:
@@ -372,6 +384,7 @@ class Transformer:
                     metadata=result.output.metadata,
                 )
         
+        logger.info(f"Transformer '{self.name}' completed successfully")
         return TransformerResult(
             transformer_name=self.name,
             success=True,
@@ -400,17 +413,20 @@ class Pipeline:
         self,
         initial_input: Optional[TransformerInput] = None,
         start_from: Optional[str] = None,
+        global_parallel: bool = False,
     ) -> PipelineResult:
         """Execute the complete pipeline.
         
         Args:
             initial_input: Initial input data (optional, may be loaded from config)
             start_from: Name of transformer to start from (for resuming)
+            global_parallel: Global parallel execution flag
             
         Returns:
             PipelineResult containing results from all transformers
         """
         context = ExecutionContext(pipeline_name=self.name)
+        context.metadata["parallel"] = global_parallel
         transformer_results: List[TransformerResult] = []
         
         # Determine starting point
@@ -424,12 +440,17 @@ class Pipeline:
         # Execute transformers in sequence
         current_input = initial_input or TransformerInput(data=None, metadata={})
         
-        for transformer in self.transformers[start_index:]:
+        total_transformers = len(self.transformers) - start_index
+        logger.info(f"Pipeline '{self.name}' starting ({total_transformers} transformers)")
+        
+        for trans_num, transformer in enumerate(self.transformers[start_index:], 1):
+            logger.info(f"\nRunning transformer {trans_num}/{total_transformers}: {transformer.name}")
             result = transformer.transform(current_input, context)
             transformer_results.append(result)
             
             if not result.success and self.spec.fail_fast:
                 # Transformer failed and fail_fast is enabled
+                logger.error(f"Transformer {trans_num}/{total_transformers}: {transformer.name} FAILED (fail_fast enabled)")
                 return PipelineResult(
                     pipeline_name=self.name,
                     success=False,
@@ -442,6 +463,8 @@ class Pipeline:
             # This will be handled by the PipelineEngine
         
         all_success = all(r.success for r in transformer_results)
+        status = "successfully" if all_success else "with errors"
+        logger.info(f"\nPipeline '{self.name}' completed {status}")
         
         return PipelineResult(
             pipeline_name=self.name,

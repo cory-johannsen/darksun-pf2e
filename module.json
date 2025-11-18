@@ -1,36 +1,17 @@
 {
   "id": "darksun-pf2e",
   "title": "Dark Sun for PF2E",
-  "description": "Compendium content and utilities that adapt the Dark Sun boxed set to the Pathfinder Second Edition system for Foundry VTT.",
-  "version": "0.1.0",
-  "type": "module",
-  "authors": [
-    {
-      "name": "cjohannsen"
-    }
-  ],
-  "license": "UNLICENSED",
-  "readme": "README.md",
-  "url": "https://github.com/cjohannsen/darksun-p2fe",
-  "manifest": "https://raw.githubusercontent.com/cjohannsen/darksun-p2fe/main/module.json",
-  "bugs": "https://github.com/cjohannsen/darksun-p2fe/issues",
+  "version": "1.0.0",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
   },
-  "relationships": {
-    "systems": [
-      {
-        "id": "pf2e",
-        "type": "system",
-        "compatibility": {
-          "minimum": "5.0.0"
-        }
-      }
-    ]
-  },
-  "scripts": [
-    "module/init.js"
+  "description": "Dark Sun campaign setting converted to Pathfinder 2E for Foundry VTT",
+  "authors": [
+    {
+      "name": "Pipeline Generator",
+      "flags": {}
+    }
   ],
   "packs": [
     {
@@ -38,16 +19,35 @@
       "label": "Dark Sun Ancestries",
       "path": "packs/dark-sun-ancestries.db",
       "type": "Item",
-      "system": "pf2e"
+      "system": "pf2e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
     },
     {
       "name": "dark-sun-rules",
       "label": "Dark Sun Rules",
       "path": "packs/dark-sun-rules.db",
       "type": "JournalEntry",
-      "system": "pf2e"
+      "system": "pf2e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
     }
   ],
-  "flags": {}
+  "relationships": {
+    "systems": [
+      {
+        "id": "pf2e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "6.0.0"
+        }
+      }
+    ]
+  },
+  "manifest": "https://example.com/modules/darksun-pf2e/module.json",
+  "download": "https://example.com/modules/darksun-pf2e/module.zip"
 }
-

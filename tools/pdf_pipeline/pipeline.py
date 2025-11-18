@@ -198,8 +198,8 @@ class PipelineEngine:
         logger.info(f"Starting pipeline execution: {self.spec.name}")
         start_time = time.time()
         
-        # Execute pipeline
-        result = self.pipeline.execute(start_from=start_from)
+        # Execute pipeline with global parallel flag
+        result = self.pipeline.execute(start_from=start_from, global_parallel=self.spec.parallel)
         
         elapsed_time = time.time() - start_time
         result.context.elapsed_time = elapsed_time

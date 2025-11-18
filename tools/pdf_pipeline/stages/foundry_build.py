@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 
 from ..base import BaseProcessor
 from ..domain import ExecutionContext, ProcessorInput, ProcessorOutput
-from ..compendium import build_ancestry_compendium, build_rules_compendium
+from ..compendium import build_ancestry_pack, build_journal_pack
 
 
 class CompendiumBuildProcessor(BaseProcessor):
@@ -48,7 +48,7 @@ class CompendiumBuildProcessor(BaseProcessor):
         if ancestry_file.exists():
             ancestry_db = output_dir / "dark-sun-ancestries.db"
             try:
-                build_ancestry_compendium(ancestry_file, ancestry_db)
+                build_ancestry_pack(ancestry_file, ancestry_db)
                 built_compendia.append({
                     "name": "dark-sun-ancestries",
                     "path": str(ancestry_db),
@@ -63,7 +63,7 @@ class CompendiumBuildProcessor(BaseProcessor):
         if journals_dir.exists():
             rules_db = output_dir / "dark-sun-rules.db"
             try:
-                build_rules_compendium(journals_dir, rules_db)
+                build_journal_pack(journals_dir, rules_db)
                 built_compendia.append({
                     "name": "dark-sun-rules",
                     "path": str(rules_db),

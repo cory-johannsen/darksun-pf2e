@@ -1,0 +1,48 @@
+{
+  "name": "validate",
+  "description": "Data validation and quality checks stage specifications",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "structural_validation",
+      "description": "Validate data structure and schema compliance",
+      "processor_spec": {
+        "name": "StructuralValidationProcessor",
+        "description": "Validates JSON structure and required fields",
+        "module_path": "tools.pdf_pipeline.stages.validate",
+        "class_name": "StructuralValidationProcessor",
+        "config": {
+          "strict": true,
+          "check_schema": true,
+          "check_references": true
+        }
+      },
+      "input_dir": "data/processed",
+      "output_dir": null
+    },
+    {
+      "name": "content_validation",
+      "description": "Validate content quality and completeness",
+      "processor_spec": {
+        "name": "ContentValidationProcessor",
+        "description": "Validates content length, traits, and data integrity",
+        "module_path": "tools.pdf_pipeline.stages.validate",
+        "class_name": "ContentValidationProcessor",
+        "config": {
+          "min_description_length": 10,
+          "check_html_validity": true,
+          "check_missing_data": true
+        }
+      },
+      "input_dir": "data/processed",
+      "output_dir": null
+    }
+  ],
+  "input": {
+    "processed_dir": "data/processed"
+  },
+  "output": {
+    "validation_report": "data/validation_report.json"
+  }
+}
+

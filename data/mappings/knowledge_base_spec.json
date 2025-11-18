@@ -1,0 +1,75 @@
+{
+  "name": "knowledge_base_build",
+  "description": "Knowledge base build stage specifications for rules extraction",
+  "version": "1.0.0",
+  "stages": [
+    {
+      "name": "adnd_extraction",
+      "description": "Extract AD&D 2E rules from sourcebooks",
+      "processor_spec": {
+        "name": "ADnDRuleExtractor",
+        "description": "Extracts rules from AD&D 2E PDF sourcebooks",
+        "module_path": "tools.pdf_pipeline.knowledge_base.adnd_extractor",
+        "class_name": "ADnDRuleExtractor",
+        "config": {
+          "sourcebook_registry": "data/mappings/sourcebook_registry.json",
+          "knowledge_base_dir": "data/knowledge_base",
+          "parallel": true,
+          "max_workers": 4
+        }
+      },
+      "input_dir": null,
+      "output_dir": "data/knowledge_base/adnd_2e"
+    },
+    {
+      "name": "pf2e_cache_init",
+      "description": "Initialize PF2E rule cache from MCP",
+      "processor_spec": {
+        "name": "PF2ECacheInitializer",
+        "description": "Initializes PF2E rule cache by querying MCP server",
+        "module_path": "tools.pdf_pipeline.knowledge_base.pf2e_client",
+        "class_name": "PF2ECacheInitializer",
+        "config": {
+          "cache_dir": "data/knowledge_base/pf2e_cache",
+          "mcp_server": "p2fe",
+          "initial_queries": [
+            "ability_scores",
+            "saving_throws",
+            "skills",
+            "combat_actions"
+          ]
+        }
+      },
+      "input_dir": null,
+      "output_dir": "data/knowledge_base/pf2e_cache"
+    }
+  ],
+  "extraction_rules": {
+    "ability_scores": {
+      "description": "Extract ability score tables and modifiers",
+      "source_pages": "dmg_revised:13-16",
+      "target_schema": "ADnDAbilityScore"
+    },
+    "saves": {
+      "description": "Extract saving throw tables",
+      "source_pages": "dmg_revised:101-102",
+      "target_schema": "ADnDSavingThrow"
+    },
+    "thac0": {
+      "description": "Extract THAC0 progression tables",
+      "source_pages": "dmg_revised:91-92",
+      "target_schema": "ADnDTHAC0"
+    },
+    "armor_class": {
+      "description": "Extract armor class tables",
+      "source_pages": "dmg_revised:75-76",
+      "target_schema": "ADnDArmorClass"
+    },
+    "combat": {
+      "description": "Extract combat mechanics and modifiers",
+      "source_pages": "dmg_revised:89-120",
+      "target_schema": "ADnDCombatMechanic"
+    }
+  }
+}
+

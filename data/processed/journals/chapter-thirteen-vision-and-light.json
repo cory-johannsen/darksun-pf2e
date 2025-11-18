@@ -6,7 +6,7 @@
     "entity_type": "journal",
     "slug": "chapter-thirteen-vision-and-light",
     "title": "Chapter Thirteen: Vision and Light",
-    "content": "<p>Limits of Vision\nAll of the conditions presented on the Visibility\nAthas. However, there are a number of conditions\nRanges table in the Players Handbook exist on\nunique to Athas that should be added.\nDark Sun Visibility Ranges\nCondition\nMovement\nSpotted\nType\nI D\nDetail\nSand, blowing\nSandstorm, mild\nSandstorm, driving\nNight, both moons\nSilt Sea, calm\nSilt Sea, rolling\n100\n50\n25\n15\n10\n50\n25\n15\n10\n5\n10\n10\n5\n5\n3\n200\n100\n50\n25\n15\n500\n200\n100\n50\n25\n100\n50\n25\n10\n5\n8 4</p>",
+    "content": "<nav id=\"table-of-contents\">\n<h2>Table of Contents</h2>\n<ul>\n<li><a href=\"#header-0-limits-of-vision\">Limits of Vision</a></li><li><a href=\"#header-1-dark-sun-visibility-ranges\">Dark Sun Visibility Ranges</a></li>\n</ul>\n</nav>\n<a id=\"top\"></a><p id=\"header-0-limits-of-vision\" class=\"h1-header\">I.  <a href=\"#top\" style=\"font-size: 0.8em; text-decoration: none;\">[^]</a> <span style=\"color: #ca5804\">Limits of Vision</span></p><p id=\"header-1-dark-sun-visibility-ranges\" class=\"h1-header\">II.  <a href=\"#top\" style=\"font-size: 0.8em; text-decoration: none;\">[^]</a> <span style=\"color: #ca5804\">Dark Sun Visibility Ranges</span></p><p>All of the conditions presented on the Visibility Ranges table in thePlayer&#x27;s Handbookexist on Athas. However, there are a number of conditions unique to Athas that should be added.</p>",
     "source_pages": [
       86,
       86
@@ -15,7 +15,8 @@
       "parent_slugs": [
         "table-of-contents-rules-book"
       ],
-      "level": 2
+      "level": 2,
+      "layout": "structured"
     }
   }
 }

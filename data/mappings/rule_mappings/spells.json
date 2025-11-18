@@ -1,0 +1,83 @@
+{
+  "name": "Spell System Conversions",
+  "description": "Mappings for converting AD&D 2E spells to PF2E",
+  "version": "1.0.0",
+  "spell_level_mapping": {
+    "description": "AD&D spell levels map to PF2E spell ranks",
+    "1": 1,
+    "2": 2,
+    "3": 3,
+    "4": 4,
+    "5": 5,
+    "6": 6,
+    "7": 7,
+    "8": 8,
+    "9": 9
+  },
+  "casting_time_conversion": {
+    "1 segment": "1 action",
+    "2 segments": "2 actions",
+    "3 segments": "3 actions",
+    "1 round": "3 actions",
+    "1 turn": "1 minute",
+    "1 hour": "1 hour"
+  },
+  "duration_conversion": {
+    "instantaneous": "instantaneous",
+    "1 round/level": "sustained up to 1 minute",
+    "1 turn/level": "10 minutes per rank",
+    "1 hour/level": "1 hour per rank",
+    "permanent": "unlimited"
+  },
+  "range_conversion": {
+    "touch": "touch",
+    "10 yards": "30 feet",
+    "30 yards": "90 feet",
+    "100 yards": "300 feet",
+    "1 mile": "1 mile"
+  },
+  "school_mappings": {
+    "Abjuration": "Abjuration",
+    "Alteration": "Transmutation",
+    "Conjuration": "Conjuration",
+    "Divination": "Divination",
+    "Enchantment": "Enchantment",
+    "Evocation": "Evocation",
+    "Illusion": "Illusion",
+    "Necromancy": "Necromancy"
+  },
+  "dark_sun_spells": {
+    "defiling_magic": {
+      "description": "Defiling magic drains life from surroundings",
+      "conversion_note": "Add custom defiling rules as variant",
+      "mechanical_impact": "May grant bonus to spell DC or damage in exchange for environmental cost"
+    },
+    "preserving_magic": {
+      "description": "Preserving magic avoids environmental damage",
+      "conversion_note": "Standard PF2E spell casting",
+      "mechanical_impact": "No additional effects"
+    },
+    "water_spells": {
+      "note": "Water-related spells are extremely rare and powerful",
+      "examples": [
+        "Create Water",
+        "Water Breathing",
+        "Wall of Water"
+      ],
+      "adjustment": "May increase spell rank or add restrictions"
+    },
+    "elemental_affinity": {
+      "note": "Fire and earth magic more common; water magic rare",
+      "fire": "standard",
+      "earth": "standard",
+      "air": "standard",
+      "water": "rare/powerful"
+    }
+  },
+  "priest_spheres": {
+    "description": "AD&D priest spheres map to PF2E divine traditions",
+    "mapping": "Convert sphere access to appropriate PF2E spell lists",
+    "note": "Dark Sun clerics serve elements, not gods"
+  }
+}
+

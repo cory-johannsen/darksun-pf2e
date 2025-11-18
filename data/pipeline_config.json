@@ -1,0 +1,498 @@
+{
+  "name": "darksun_conversion_pipeline",
+  "description": "Complete pipeline for converting Dark Sun AD&D 2E module to Foundry VTT PF2E format",
+  "version": "1.0.0",
+  "workspace_root": ".",
+  "transformers": [
+    {
+      "name": "source_fetch",
+      "description": "Fetch required source materials from archive.org",
+      "input_type": "none",
+      "output_type": "source_files",
+      "stages": [
+        {
+          "name": "adnd_source_fetch",
+          "description": "Fetch AD&D 2nd Edition source materials from archive.org",
+          "processor_spec": {
+            "name": "SourceFetchProcessor",
+            "description": "Downloads AD&D 2E PDFs and EPUBs from archive.org with parallel downloads",
+            "module_path": "tools.pdf_pipeline.stages.source_fetch",
+            "class_name": "SourceFetchProcessor",
+            "config": {
+              "sources_dir": "sources",
+              "archive_url": "https://archive.org/download/advanced-dungeons-dragons-2nd-edition",
+              "max_workers": null
+            }
+          },
+          "input_dir": null,
+          "output_dir": "sources"
+        },
+        {
+          "name": "pf2e_source_check",
+          "description": "Verify Pathfinder 2E source materials are present",
+          "processor_spec": {
+            "name": "PF2ESourceFetchProcessor",
+            "description": "Checks for required PF2E PDF sources in the sources directory",
+            "module_path": "tools.pdf_pipeline.stages.source_fetch",
+            "class_name": "PF2ESourceFetchProcessor",
+            "config": {
+              "sources_dir": "sources",
+              "required_files": [
+                "PZO12001E.pdf",
+                "PZO12002E.pdf",
+                "PZO12003E_Monster_Core.pdf",
+                "PZO12004E.pdf"
+              ]
+            }
+          },
+          "input_dir": null,
+          "output_dir": null
+        }
+      ]
+    },
+    {
+      "name": "extract",
+      "description": "Extract data from source PDF",
+      "input_type": "pdf",
+      "output_type": "structured_json",
+      "stages": [
+        {
+          "name": "manifest_generation",
+          "description": "Generate manifest from PDF table of contents",
+          "processor_spec": {
+            "name": "ManifestProcessor",
+            "description": "Extracts TOC and generates section manifest",
+            "module_path": "tools.pdf_pipeline.stages.extract",
+            "class_name": "ManifestProcessor",
+            "config": {
+              "pdf_path": "tsr02400_-_ADD_Setting_-_Dark_Sun_Box_Set_Original.pdf",
+              "min_level": 2,
+              "extract_toc": true
+            }
+          },
+          "input_dir": null,
+          "output_dir": "data/raw"
+        },
+        {
+          "name": "section_extraction",
+          "description": "Extract sections from PDF based on manifest",
+          "processor_spec": {
+            "name": "SectionExtractionProcessor",
+            "description": "Extracts text and layout from PDF sections",
+            "module_path": "tools.pdf_pipeline.stages.extract",
+            "class_name": "SectionExtractionProcessor",
+            "config": {
+              "manifest_path": "data/raw/pdf_manifest.json",
+              "pdf_path": "tsr02400_-_ADD_Setting_-_Dark_Sun_Box_Set_Original.pdf",
+              "mode": "structured",
+              "min_level": 2,
+              "extract_images": true,
+              "extract_tables": true,
+              "parallel": true,
+              "max_workers": 4,
+              "chunksize": 1
+            }
+          },
+          "postprocessor_spec": {
+            "name": "TableDetectionPostProcessor",
+            "description": "Detects and structures tables in extracted content",
+            "module_path": "tools.pdf_pipeline.stages.extract",
+            "class_name": "TableDetectionPostProcessor",
+            "config": {
+              "detect_headers": true,
+              "merge_cells": true
+            }
+          },
+          "input_dir": "data/raw",
+          "output_dir": "data/raw_structured/sections"
+        },
+        {
+          "name": "borderless_table_detection",
+          "description": "Detect and reconstruct borderless tables from aligned text blocks",
+          "processor_spec": {
+            "name": "BorderlessTableDetector",
+            "description": "Detects tables without visible borders using text alignment patterns",
+            "module_path": "tools.pdf_pipeline.postprocessors.borderless_tables",
+            "class_name": "BorderlessTableDetector",
+            "config": {
+              "sections_dir": "data/raw_structured/sections",
+              "min_columns": 3,
+              "min_rows": 2,
+              "y_tolerance": 5.0,
+              "parallel": true,
+              "max_workers": 4,
+              "chunksize": 1
+            }
+          },
+          "input_dir": "data/raw_structured/sections",
+          "output_dir": "data/raw_structured/sections"
+        },
+        {
+          "name": "chapter_2_table_fixes",
+          "description": "Fix specific table issues in Chapter 2",
+          "processor_spec": {
+            "name": "Chapter2TableFixer",
+            "description": "Reconstructs complex tables like Racial Ability Requirements",
+            "module_path": "tools.pdf_pipeline.postprocessors.chapter_2_tables",
+            "class_name": "Chapter2TableFixer",
+            "config": {
+              "sections_dir": "data/raw_structured/sections"
+            }
+          },
+          "input_dir": "data/raw_structured/sections",
+          "output_dir": "data/raw_structured/sections"
+        },
+        {
+          "name": "chapter_9_table_fixes",
+          "description": "Extract and reorder Bonus to AC table in Chapter 9",
+          "processor_spec": {
+            "name": "Chapter9TableFixer",
+            "description": "Extracts and reconstructs the Bonus to AC Per Type of Piece table and reorders it after Important Considerations section",
+            "module_path": "tools.pdf_pipeline.postprocessors.chapter_9_tables",
+            "class_name": "Chapter9TableFixer",
+            "config": {
+              "sections_dir": "data/raw_structured/sections"
+            }
+          },
+          "input_dir": "data/raw_structured/sections",
+          "output_dir": "data/raw_structured/sections"
+        },
+        {
+          "name": "chapter_three_geography_processing",
+          "description": "Add paragraph breaks to Chapter Three: Athasian Geography",
+          "processor_spec": {
+            "name": "ChapterThreeGeographyProcessor",
+            "description": "Splits text blocks at designated break points for proper paragraph separation",
+            "module_path": "tools.pdf_pipeline.postprocessors.chapter_three_geography_processing",
+            "class_name": "ChapterThreeGeographyProcessor",
+            "config": {
+              "sections_dir": "data/raw_structured/sections"
+            }
+          },
+          "input_dir": "data/raw_structured/sections",
+          "output_dir": "data/raw_structured/sections"
+        }
+      ]
+    },
+    {
+      "name": "transform",
+      "description": "Transform raw data to processed HTML",
+      "input_type": "structured_json",
+      "output_type": "processed_json",
+      "stages": [
+        {
+          "name": "journal_transformation",
+          "description": "Transform raw sections to formatted HTML journals",
+          "processor_spec": {
+            "name": "JournalTransformProcessor",
+            "description": "Converts raw PDF sections to HTML with TOC",
+            "module_path": "tools.pdf_pipeline.stages.transform",
+            "class_name": "JournalTransformProcessor",
+            "config": {
+              "sections_dir": "data/raw_structured/sections",
+              "profiles_path": "data/mappings/section_profiles.json",
+              "generate_toc": true,
+              "preserve_tables": true,
+              "format_headings": true,
+              "parallel": true,
+              "max_workers": 4,
+              "chunksize": 1
+            }
+          },
+          "postprocessor_spec": {
+            "name": "HTMLExportPostProcessor",
+            "description": "Exports journal JSON to standalone HTML files",
+            "module_path": "tools.pdf_pipeline.postprocessors.html_export",
+            "class_name": "HTMLExportPostProcessor",
+            "config": {
+              "input_dir": "data/processed/journals",
+              "output_dir": "data/html_output",
+              "title_prefix": "Dark Sun - ",
+              "parallel": true,
+              "max_workers": 4,
+              "chunksize": 1
+            }
+          },
+          "input_dir": "data/raw_structured/sections",
+          "output_dir": "data/processed/journals"
+        },
+        {
+          "name": "chapter_9_html_reorder",
+          "description": "Reorder Bonus to AC section in Chapter 9 HTML",
+          "processor_spec": {
+            "name": "Chapter9HTMLReorder",
+            "description": "Moves the Bonus to AC Per Type of Piece section to appear after Important Considerations in the HTML output",
+            "module_path": "tools.pdf_pipeline.postprocessors.chapter_9_html_reorder",
+            "class_name": "Chapter9HTMLReorder",
+            "config": {
+              "html_output_dir": "data/html_output"
+            }
+          },
+          "input_dir": "data/html_output",
+          "output_dir": "data/html_output"
+        },
+        {
+          "name": "ancestry_transformation",
+          "description": "Transform race sections to ancestry data",
+          "processor_spec": {
+            "name": "AncestryTransformProcessor",
+            "description": "Extracts ancestry data from race chapters",
+            "module_path": "tools.pdf_pipeline.stages.transform",
+            "class_name": "AncestryTransformProcessor",
+            "config": {
+              "sections_dir": "data/raw_structured/sections",
+              "mapping_file": "data/mappings/ancestries.json",
+              "extract_traits": true,
+              "extract_abilities": true
+            }
+          },
+          "input_dir": "data/raw_structured/sections",
+          "output_dir": "data/processed"
+        },
+        {
+          "name": "master_toc_generation",
+          "description": "[TOC_DOCUMENT] Generate master table of contents linking all chapters",
+          "processor_spec": {
+            "name": "MasterTOCGenerator",
+            "description": "Creates table_of_contents.html with links to all converted chapters",
+            "module_path": "tools.pdf_pipeline.postprocessors.master_toc",
+            "class_name": "MasterTOCGenerator",
+            "config": {
+              "html_dir": "data/html_output",
+              "output_file": "data/html_output/table_of_contents.html"
+            }
+          },
+          "input_dir": "data/html_output",
+          "output_dir": "data/html_output"
+        }
+      ]
+    },
+    {
+      "name": "knowledge_base_build",
+      "description": "Build knowledge bases for AD&D 2E and PF2E rules",
+      "input_type": "structured_json",
+      "output_type": "knowledge_base",
+      "stages": [
+        {
+          "name": "adnd_extraction",
+          "description": "Extract AD&D 2E rules from sourcebooks",
+          "processor_spec": {
+            "name": "ADnDRuleExtractor",
+            "description": "Extracts rules from AD&D 2E PDF sourcebooks",
+            "module_path": "tools.pdf_pipeline.knowledge_base.adnd_extractor",
+            "class_name": "ADnDRuleExtractor",
+            "config": {
+              "sourcebook_registry": "data/mappings/sourcebook_registry.json",
+              "knowledge_base_dir": "data/knowledge_base",
+              "parallel": true,
+              "max_workers": 4
+            }
+          },
+          "input_dir": null,
+          "output_dir": "data/knowledge_base/adnd_2e"
+        },
+        {
+          "name": "pf2e_cache_init",
+          "description": "Initialize PF2E rule cache from MCP",
+          "processor_spec": {
+            "name": "PF2ECacheInitializer",
+            "description": "Initializes PF2E rule cache by querying MCP server",
+            "module_path": "tools.pdf_pipeline.knowledge_base.pf2e_client",
+            "class_name": "PF2ECacheInitializer",
+            "config": {
+              "cache_dir": "data/knowledge_base/pf2e_cache",
+              "mcp_server": "p2fe",
+              "initial_queries": [
+                "ability_scores",
+                "saving_throws",
+                "skills",
+                "combat_actions"
+              ]
+            }
+          },
+          "input_dir": null,
+          "output_dir": "data/knowledge_base/pf2e_cache"
+        }
+      ]
+    },
+    {
+      "name": "validate",
+      "description": "Validate and verify transformations",
+      "input_type": "processed_json",
+      "output_type": "validation_report",
+      "stages": [
+        {
+          "name": "structural_validation",
+          "description": "Validate data structure and schema compliance",
+          "processor_spec": {
+            "name": "StructuralValidationProcessor",
+            "description": "Validates JSON structure and required fields",
+            "module_path": "tools.pdf_pipeline.stages.validate",
+            "class_name": "StructuralValidationProcessor",
+            "config": {
+              "processed_dir": "data/processed",
+              "strict": true,
+              "check_schema": true,
+              "check_references": true,
+              "parallel": true,
+              "max_workers": 4,
+              "chunksize": 1
+            }
+          },
+          "input_dir": "data/processed",
+          "output_dir": null
+        },
+        {
+          "name": "content_validation",
+          "description": "Validate content quality and completeness",
+          "processor_spec": {
+            "name": "ContentValidationProcessor",
+            "description": "Validates content length, traits, and data integrity",
+            "module_path": "tools.pdf_pipeline.stages.validate",
+            "class_name": "ContentValidationProcessor",
+            "config": {
+              "processed_dir": "data/processed",
+              "min_description_length": 10,
+              "check_html_validity": true,
+              "check_missing_data": true,
+              "parallel": true,
+              "max_workers": 4,
+              "chunksize": 1
+            }
+          },
+          "input_dir": "data/processed",
+          "output_dir": null
+        },
+        {
+          "name": "ocr_ordering_validation",
+          "description": "Validate content ordering using OCR and generate corrections",
+          "processor_spec": {
+            "name": "OCRValidationProcessor",
+            "description": "Uses OCR to verify section ordering and generate correction suggestions",
+            "module_path": "tools.pdf_pipeline.stages.validate",
+            "class_name": "OCRValidationProcessor",
+            "config": {
+              "pdf_path": "tsr02400_-_ADD_Setting_-_Dark_Sun_Box_Set_Original.pdf",
+              "structured_dir": "data/raw_structured/sections",
+              "manifest_path": "data/raw/pdf_manifest.json",
+              "output_corrections": true,
+              "corrections_path": "data/ocr_ordering_corrections.json",
+              "ocr_cache_dir": "data/.ocr_cache",
+              "use_cache": true,
+              "sample_pages": null,
+              "parallel": true,
+              "ocr_workers": 4,
+              "ocr_chunksize": 1,
+              "ocr_batch_size": 5
+            }
+          },
+          "input_dir": "data/raw_structured/sections",
+          "output_dir": null
+        },
+        {
+          "name": "table_header_validation",
+          "description": "Validate that tables have proper header_rows metadata",
+          "processor_spec": {
+            "name": "TableHeaderValidationProcessor",
+            "description": "Ensures tables with header rows have header_rows metadata set",
+            "module_path": "tools.pdf_pipeline.stages.validate",
+            "class_name": "TableHeaderValidationProcessor",
+            "config": {
+              "sections_dir": "data/raw_structured/sections",
+              "html_dir": "data/html_output"
+            }
+          },
+          "input_dir": "data/raw_structured/sections",
+          "output_dir": null
+        }
+      ]
+    },
+    {
+      "name": "rules_conversion",
+      "description": "Convert AD&D 2E rules to Pathfinder 2E using semantic mapping",
+      "input_type": "processed_json",
+      "output_type": "pf2e_json",
+      "stages": [
+        {
+          "name": "adnd_to_pf2e_conversion",
+          "description": "Convert AD&D 2E rules to Pathfinder 2E equivalents",
+          "processor_spec": {
+            "name": "ADnDToPF2EProcessor",
+            "description": "Converts game mechanics from AD&D 2E to PF2E system using semantic mapping",
+            "module_path": "tools.pdf_pipeline.stages.rules_conversion",
+            "class_name": "ADnDToPF2EProcessor",
+            "config": {
+              "processed_dir": "data/processed",
+              "knowledge_base_dir": "data/knowledge_base",
+              "preserve_flavor": true
+            }
+          },
+          "postprocessor_spec": {
+            "name": "RulesValidationPostProcessor",
+            "description": "Validates converted rules for PF2E compliance",
+            "module_path": "tools.pdf_pipeline.stages.rules_conversion",
+            "class_name": "RulesValidationPostProcessor",
+            "config": {
+              "check_balance": true,
+              "check_compatibility": true
+            }
+          },
+          "input_dir": "data/processed",
+          "output_dir": "data/pf2e_converted"
+        }
+      ]
+    },
+    {
+      "name": "foundry_build",
+      "description": "Generate Foundry VTT module",
+      "input_type": "pf2e_json",
+      "output_type": "foundry_module",
+      "stages": [
+        {
+          "name": "compendium_generation",
+          "description": "Generate Foundry compendium databases",
+          "processor_spec": {
+            "name": "CompendiumBuildProcessor",
+            "description": "Builds Foundry .db files from processed data",
+            "module_path": "tools.pdf_pipeline.stages.foundry_build",
+            "class_name": "CompendiumBuildProcessor",
+            "config": {
+              "converted_dir": "data/processed",
+              "foundry_version": 13,
+              "system": "pf2e",
+              "compress": true
+            }
+          },
+          "input_dir": "data/processed",
+          "output_dir": "packs"
+        },
+        {
+          "name": "module_metadata",
+          "description": "Generate or update module.json",
+          "processor_spec": {
+            "name": "ModuleMetadataProcessor",
+            "description": "Creates module.json with correct metadata",
+            "module_path": "tools.pdf_pipeline.stages.foundry_build",
+            "class_name": "ModuleMetadataProcessor",
+            "config": {
+              "module_id": "darksun-pf2e",
+              "title": "Dark Sun for PF2E",
+              "version": "1.0.0",
+              "compatibility": {
+                "minimum": "13",
+                "verified": "13"
+              }
+            }
+          },
+          "input_dir": null,
+          "output_dir": "."
+        }
+      ]
+    }
+  ],
+  "parallel": true,
+  "fail_fast": true,
+  "checkpoint_enabled": true,
+  "checkpoint_dir": "data/.checkpoints"
+}
+

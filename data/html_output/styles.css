@@ -1,0 +1,408 @@
+/* Dark Sun PF2E Pipeline - Shared Stylesheet */
+/* Generated from AD&D 2E Dark Sun Box Set */
+
+/* CSS Variables */
+:root {
+    --bg-main: #1a1a1a;
+    --bg-content: #2d2d2d;
+    --text-primary: #e8e6e3;
+    --text-secondary: #b8b5b2;
+    --accent-orange: #ca5804;
+    --accent-light: #d67326;
+    --border-color: #444;
+    --nav-bg: #252525;
+    --link-color: #8ab4f8;
+    --link-hover: #adc7f7;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-size: 14px;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.7;
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Headings */
+h1 {
+    font-size: 2.5rem;
+    color: var(--accent-orange);
+    margin-bottom: 1.5rem;
+    border-bottom: 3px solid var(--accent-orange);
+    padding-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Semantic Headers */
+h2 {
+    font-size: 1.8rem;
+    color: var(--accent-light);
+    margin: 2rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+h3 {
+    font-size: 1.4rem;
+    color: var(--accent-light);
+    margin: 1.5rem 0 0.75rem 0;
+    text-transform: capitalize;
+}
+
+h4 {
+    font-size: 1.2rem;
+    color: var(--accent-light);
+    margin: 1rem 0 0.5rem 0;
+}
+
+/* Table of Contents Styling */
+nav#table-of-contents {
+    background-color: var(--nav-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+nav#table-of-contents h2 {
+    color: var(--accent-light);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+nav#table-of-contents ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+nav#table-of-contents li {
+    margin: 0.5rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--accent-orange);
+}
+
+/* [TOC_FORMAT] Subheader styling - indented and smaller font */
+nav#table-of-contents li.toc-subheader {
+    padding-left: 2.5rem;
+    margin: 0.3rem 0;
+    font-size: 0.9em;
+    border-left-color: var(--accent-light);
+}
+
+/* [TOC_FORMAT] H3 sub-subheader styling - more indented and smallest font */
+nav#table-of-contents li.toc-subsubheader {
+    padding-left: 4rem;
+    margin: 0.2rem 0;
+    font-size: 0.85em;
+    border-left-color: var(--accent-light);
+}
+
+nav#table-of-contents li.toc-subsubsubheader {
+    padding-left: 5.5rem;
+    margin: 0.2rem 0;
+    font-size: 0.8em;
+    border-left-color: var(--accent-light);
+}
+
+nav#table-of-contents a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+nav#table-of-contents a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+}
+
+/* Semantic Header Classes - for proper header level detection */
+.header-h1 {
+    color: var(--accent-orange);
+    font-size: 1em; /* Default size - no scaling */
+}
+
+.header-h2 {
+    color: var(--accent-orange);
+    font-size: 0.9em; /* Subheader */
+}
+
+.header-h3 {
+    color: var(--accent-orange);
+    font-size: 0.8em; /* Sub-subheader */
+}
+
+.header-h4 {
+    color: var(--accent-orange);
+    font-size: 0.7em; /* Smallest header */
+}
+
+/* [TOC_DOCUMENT] Back to Master TOC Link */
+.back-to-master-toc {
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: var(--nav-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.back-to-master-toc a {
+    color: var(--accent-light);
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    transition: color 0.2s ease;
+}
+
+.back-to-master-toc a:hover {
+    color: var(--accent-orange);
+    text-decoration: none;
+}
+
+.back-to-master-toc a::before {
+    content: "← ";
+    font-size: 1.2rem;
+}
+
+/* Content Sections */
+section {
+    background-color: var(--bg-content);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+section[data-page]::before {
+    content: "Page " attr(data-page);
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+/* Styled Headers (colored spans) */
+/* [HEADER_FORMAT] display: inline to keep back-to-top link [^] on same line */
+p span[style*="color"] {
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: inline;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+p:has(> span[style*="color"]) {
+    margin-bottom: 0.5rem;
+}
+
+/* Legacy styled headers (being phased out) - Keep for backward compatibility */
+p.h2-header span[style*="color"] {
+    font-size: 1.1rem !important;
+    font-weight: bold;
+}
+
+p.h3-header span[style*="color"] {
+    font-size: 1.0rem !important;
+    font-weight: bold;
+}
+
+/* Note: New content uses semantic <h2>, <h3>, <h4> tags above instead of styled <p> tags */
+
+/* Links */
+a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+}
+
+/* Lists */
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+li {
+    margin: 0.75rem 0;
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--accent-orange);
+    transition: border-color 0.2s ease;
+}
+
+li:hover {
+    border-left-color: var(--accent-light);
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background-color: var(--bg-main);
+}
+
+th, td {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    text-align: left;
+}
+
+th {
+    background-color: var(--accent-orange);
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Code and Preformatted Text */
+code, pre {
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.2rem 0.4rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+pre {
+    padding: 1rem;
+    overflow-x: auto;
+}
+
+/* Master TOC - Section Headers */
+.toc-section-header {
+    color: var(--accent-orange);
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--accent-orange);
+    padding-bottom: 0.5rem;
+}
+
+.toc-section-header:first-of-type {
+    margin-top: 0.5rem;
+}
+
+/* Master TOC - Section Chapter Lists */
+ul.toc-section-chapters {
+    list-style: none;
+    padding-left: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+ul.toc-section-chapters li.toc-chapter {
+    margin: 0.75rem 0;
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--accent-light);
+    transition: border-color 0.2s ease;
+}
+
+ul.toc-section-chapters li.toc-chapter:hover {
+    border-left-color: var(--accent-orange);
+}
+
+ul.toc-section-chapters li.toc-chapter a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-size: 1.05rem;
+}
+
+ul.toc-section-chapters li.toc-chapter a:hover {
+    color: var(--link-hover);
+    text-decoration: underline;
+}
+
+/* Missing Chapters (Master TOC) */
+.missing-chapters {
+    background-color: var(--bg-main);
+    border-color: var(--text-secondary);
+}
+
+.missing-chapters h2 {
+    color: var(--text-secondary);
+}
+
+.missing-chapters li {
+    color: var(--text-secondary);
+    border-left-color: var(--text-secondary);
+}
+
+/* Footer (Master TOC) */
+footer {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background-color: white;
+        color: black;
+        max-width: 100%;
+        padding: 0;
+    }
+    
+    section {
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+    }
+    
+    nav#table-of-contents {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    section {
+        padding: 1.5rem;
+    }
+}
+

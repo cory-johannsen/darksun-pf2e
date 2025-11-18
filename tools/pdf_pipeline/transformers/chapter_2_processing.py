@@ -7,7 +7,7 @@ from copy import deepcopy
 from typing import List, Sequence
 
 # Use relative imports from the parent module
-from .journal_v2 import (
+from .journal import (
     _normalize_plain_text,
     _collect_cells_from_blocks,
     _build_matrix_from_cells,
@@ -16,717 +16,72 @@ from .journal_v2 import (
     _join_fragments,
 )
 
-
-def _update_block_bbox(block: dict) -> None:
-    """Update block bbox based on its lines."""
-    lines = block.get("lines", [])
-    if not lines:
-        return
-    x0 = min(float(line.get("bbox", [0, 0, 0, 0])[0]) for line in lines)
-    y0 = min(float(line.get("bbox", [0, 0, 0, 0])[1]) for line in lines)
-    x1 = max(float(line.get("bbox", [0, 0, 0, 0])[2]) for line in lines)
-    y1 = max(float(line.get("bbox", [0, 0, 0, 0])[3]) for line in lines)
-    block["bbox"] = [x0, y0, x1, y1]
-
-
-def _find_block(page: dict, predicate) -> tuple[int, dict] | None:
-    """Find a block in a page that matches the predicate."""
-    for idx, block in enumerate(page.get("blocks", [])):
-        texts = [
-            _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", [])))
-            for line in block.get("lines", [])
-        ]
-        if predicate(texts):
-            return idx, block
-    return None
-
-
-def _process_table_2_ability_adjustments(page0: dict) -> None:
-    """Process Table 2: Ability Adjustments on page 0."""
-    found = _find_block(page0, lambda texts: any(text == "Table 2: Ability Adjustments" for text in texts))
-    if not found:
-        return
-    
-    heading_idx, heading_block = found
-    next_heading = _find_block(page0, lambda texts: any(text == "Racial Ability Requirements" for text in texts))
-    heading_bbox = [float(coord) for coord in heading_block.get("bbox", [0, 0, 0, 0])]
-    y_min = heading_bbox[1] - 2.0
-    y_max = (
-        float(next_heading[1]["bbox"][1]) - 2.0
-        if next_heading
-        else float(page0.get("height", 0) or 0)
-    )
-    x_min = heading_bbox[0] - 10.0
-    x_max = heading_bbox[2] + 160.0
-    table_blocks = []
-    for idx, block in enumerate(page0.get("blocks", [])):
-        if idx == heading_idx:
-            continue
-        bbox = [float(coord) for coord in block.get("bbox", [0, 0, 0, 0])]
-        if not block.get("lines"):
-            continue
-        if bbox[1] < y_min or bbox[1] > y_max:
-            continue
-        if bbox[0] < x_min or bbox[2] > x_max:
-            continue
-        table_blocks.append(idx)
-
-    if not table_blocks:
-        return
-    
-    cells = _collect_cells_from_blocks(page0, table_blocks)
-    if not cells:
-        return
-    
-    rows = _build_matrix_from_cells(cells, expected_columns=2, row_tolerance=4.0)
-    allowed = {
-        "Race",
-        "Dwarf",
-        "Elf",
-        "Half-Elf",
-        "Half-Giant",
-        "Halfling",
-        "Mul",
-        "Thri-kreen",
-    }
-    merged_rows: List[List[str]] = []
-    for row in rows:
-        if not row:
-            continue
-        key = row[0]
-        if key in allowed:
-            merged_rows.append(row[:])
-            continue
-        if merged_rows and (not key or key == ""):
-            value = row[1] if len(row) > 1 else ""
-            if value:
-                combined = _join_fragments([merged_rows[-1][1], value])
-                merged_rows[-1][1] = combined
-    filtered_rows = []
-    for row in merged_rows:
-        if not row:
-            continue
-        row[1] = row[1].rstrip(",")
-        filtered_rows.append(row)
-    if len(filtered_rows) >= 2:
-        bbox = _compute_bbox_from_cells(cells)
-        table = _table_from_rows(filtered_rows, header_rows=1, bbox=bbox)
-        page0.setdefault("tables", []).append(table)
-        for idx in table_blocks:
-            page0["blocks"][idx]["lines"] = []
+# Import extracted functions from chapter_2 sub-modules
+from .chapter_2.common import (
+    update_block_bbox as _update_block_bbox,
+    find_block as _find_block,
+)
+from .chapter_2.tables import (
+    process_table_2_ability_adjustments as _process_table_2_ability_adjustments,
+    process_racial_ability_requirements_table as _process_racial_ability_requirements_table,
+    process_table_3_racial_class_limits as _process_table_3_racial_class_limits,
+    process_other_languages_table as _process_other_languages_table,
+)
+from .chapter_2.physical_tables import (
+    process_height_weight_table as _process_height_weight_table,
+    process_starting_age_table as _process_starting_age_table,
+)
+from .chapter_2.dwarves import fix_dwarves_section_text_ordering as _fix_dwarves_section_text_ordering
+from .chapter_2.elves import (
+    fix_elves_section_paragraph_breaks as _fix_elves_section_paragraph_breaks,
+    fix_elves_roleplaying_paragraph_breaks as _fix_elves_roleplaying_paragraph_breaks,
+)
+from .chapter_2.half_elves import (
+    fix_half_elves_section_paragraph_breaks as _fix_half_elves_section_paragraph_breaks,
+    fix_half_elves_roleplaying_paragraph_breaks as _fix_half_elves_roleplaying_paragraph_breaks,
+)
+from .chapter_2.humans import force_human_paragraph_breaks as _force_human_paragraph_breaks
+from .chapter_2.mul import (
+    process_mul_exertion_table as _process_mul_exertion_table,
+    force_mul_paragraph_breaks as _force_mul_paragraph_breaks,
+    force_mul_roleplaying_paragraph_breaks as _force_mul_roleplaying_paragraph_breaks,
+)
+from .chapter_2.thri_kreen import (
+    force_thri_kreen_paragraph_breaks as _force_thri_kreen_paragraph_breaks,
+    force_thri_kreen_roleplaying_paragraph_breaks as _force_thri_kreen_roleplaying_paragraph_breaks,
+)
 
 
-def _process_racial_ability_requirements_table(page0: dict) -> None:
-    """Process Racial Ability Requirements table on page 0."""
-    header_match = _find_block(
-        page0,
-        lambda texts: "Ability" in texts and {"Dwarf", "Elf", "H-Elf", "H-giant", "Halfling", "Mul", "Thri-kreen"}.issubset(set(texts)),
-    )
-    if not header_match:
-        return
-    
-    header_idx, header_block = header_match
-    header_bbox = [float(coord) for coord in header_block.get("bbox", [0, 0, 0, 0])]
-    y_min = header_bbox[1] - 2.0
-    y_max = float(page0.get("height", 0) or 0)
-    table_blocks = []
-    for idx in range(header_idx, len(page0.get("blocks", []))):
-        block = page0["blocks"][idx]
-        if not block.get("lines"):
-            continue
-        bbox = [float(coord) for coord in block.get("bbox", [0, 0, 0, 0])]
-        if bbox[1] < y_min or bbox[1] > y_max:
-            continue
-        texts = [
-            _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", [])))
-            for line in block.get("lines", [])
-        ]
-        if idx != header_idx and any(text.startswith("Table ") for text in texts):
-            break
-        table_blocks.append(idx)
-
-    if not table_blocks:
-        return
-    
-    cells = _collect_cells_from_blocks(page0, table_blocks)
-    if not cells:
-        return
-    
-    rows = _build_matrix_from_cells(cells, expected_columns=8, row_tolerance=4.0)
-    allowed = {
-        "Ability",
-        "Strength",
-        "Dexterity",
-        "Constitution",
-        "Intelligence",
-        "Wisdom",
-        "Charisma",
-    }
-    filtered_rows = [row for row in rows if row and row[0] in allowed]
-    if len(filtered_rows) < 2:
-        return
-    
-    bbox = _compute_bbox_from_cells(cells)
-    page_width = float(page0.get("width", 0) or 0)
-    column_width = (
-        max(header_bbox[2] - header_bbox[0], (page_width / 2) - 20.0)
-        if page_width
-        else header_bbox[2] - header_bbox[0]
-    )
-    bbox[0] = header_bbox[0]
-    bbox[2] = bbox[0] + column_width
-    if page_width:
-        bbox[2] = min(bbox[2], page_width - 10.0)
-    bbox[1] = max(bbox[1], header_bbox[3] + 2.0)
-    bbox[3] = max(bbox[3], bbox[1] + 4.0)
-    table = _table_from_rows(filtered_rows, header_rows=1, bbox=bbox)
-    page0.setdefault("tables", []).append(table)
-    for idx in table_blocks:
-        if idx == header_idx:
-            continue
-        page0["blocks"][idx]["lines"] = []
-
-    cleanup_labels = {
-        "Ability",
-        "Strength",
-        "Dexterity",
-        "Constitution",
-        "Intelligence",
-        "Wisdom",
-        "Charisma",
-        "Dwarf",
-        "Elf",
-        "H-Elf",
-        "H-giant",
-        "Halfling",
-        "Mul",
-        "Thri-kreen",
-    }
-    # Reposition the Racial Ability Requirements table and header to come before Racial Ability Adjustments
-    # Find the target positions
-    racial_req_header_idx = None
-    racial_adj_header_idx = None
-    for idx, block in enumerate(page0.get("blocks", [])):
-        texts = [
-            _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", [])))
-            for line in block.get("lines", [])
-        ]
-        if any(text == "Racial Ability Requirements" for text in texts):
-            racial_req_header_idx = idx
-        elif any(text == "Racial Ability Adjustments" for text in texts):
-            racial_adj_header_idx = idx
-    
-    if racial_req_header_idx is not None and racial_adj_header_idx is not None:
-        # Get the requirements header block
-        req_header_block = page0["blocks"][racial_req_header_idx]
-        req_header_bbox = [float(c) for c in req_header_block.get("bbox", [0, 0, 0, 0])]
-        
-        # Get the adjustments header block
-        adj_header_block = page0["blocks"][racial_adj_header_idx]
-        adj_header_bbox = [float(c) for c in adj_header_block.get("bbox", [0, 0, 0, 0])]
-        
-        # Calculate new position for requirements header (just above adjustments header)
-        new_req_y = adj_header_bbox[1] - 20.0  # Place it 20 pixels above adjustments
-        
-        # Update requirements header position
-        height = req_header_bbox[3] - req_header_bbox[1]
-        req_header_block["bbox"] = [req_header_bbox[0], new_req_y, req_header_bbox[2], new_req_y + height]
-        for line in req_header_block.get("lines", []):
-            line_bbox = [float(c) for c in line.get("bbox", [0, 0, 0, 0])]
-            line_height = line_bbox[3] - line_bbox[1]
-            line["bbox"] = [line_bbox[0], new_req_y, line_bbox[2], new_req_y + line_height]
-        
-        # Update the requirements table position if it exists
-        for table in page0.get("tables", []):
-            table_bbox = [float(c) for c in table.get("bbox", [0, 0, 0, 0])]
-            # Identify requirements table by column count (8 columns)
-            if table.get("rows") and len(table["rows"][0].get("cells", [])) == 8:
-                table_height = table_bbox[3] - table_bbox[1]
-                new_table_y = new_req_y + height + 4.0
-                table["bbox"] = [table_bbox[0], new_table_y, table_bbox[2], new_table_y + table_height]
-    
-    # Sort tables on page 0 by Y-coordinate to ensure correct rendering order
-    if page0.get("tables"):
-        page0["tables"].sort(key=lambda t: float(t.get("bbox", [0, 0, 0, 0])[1]))
-    
-    for block in page0.get("blocks", []):
-        lines = block.get("lines", [])
-        if not lines:
-            continue
-        remaining = []
-        for line in lines:
-            text = _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))).strip()
-            if text in cleanup_labels:
-                continue
-            remaining.append(line)
-        if len(remaining) != len(lines):
-            block["lines"] = remaining
-            if remaining:
-                _update_block_bbox(block)
-            else:
-                block["bbox"] = [0.0, 0.0, 0.0, 0.0]
+# _update_block_bbox - MOVED to chapter_2/common.py
 
 
-def _process_table_3_racial_class_limits(page1: dict) -> None:
-    """Process Table 3: Racial Class And Level Limits on page 1."""
-    match = _find_block(
-        page1,
-        lambda texts: any(text == "Table 3: Racial Class And Level Limits" for text in texts),
-    )
-    if not match:
-        return
-    
-    heading_idx, heading_block = match
-    heading_bbox = [float(coord) for coord in heading_block.get("bbox", [0, 0, 0, 0])]
-    page_width = float(page1.get("width", 0) or 0)
-    y_min = heading_bbox[1] - 2.0
-
-    def _is_footer(texts: Sequence[str]) -> bool:
-        if not texts:
-            return False
-        first = texts[0]
-        return first.startswith("U:") or first.startswith("Any #") or first.startswith("-:") or first.startswith("The Player")
-
-    footer = None
-    for idx in range(heading_idx + 1, len(page1.get("blocks", []))):
-        block = page1["blocks"][idx]
-        texts = [
-            _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", [])))
-            for line in block.get("lines", [])
-        ]
-        if _is_footer(texts):
-            footer = block
-            break
-
-    y_max = float(footer.get("bbox", [0, 0, 0, page1.get("height", 0) or 0])[1]) - 2.0 if footer else float(page1.get("height", 0) or 0)
-
-    table_blocks = []
-    for idx, block in enumerate(page1.get("blocks", [])):
-        if idx < heading_idx:
-            continue
-        if not block.get("lines"):
-            continue
-        bbox = [float(coord) for coord in block.get("bbox", [0, 0, 0, 0])]
-        if bbox[1] < y_min or bbox[1] > y_max:
-            continue
-        texts = [
-            _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", [])))
-            for line in block.get("lines", [])
-        ]
-        if idx != heading_idx and any(text.startswith("Table ") for text in texts):
-            continue
-        table_blocks.append(idx)
-
-    if not table_blocks:
-        return
-    
-    cells = _collect_cells_from_blocks(page1, table_blocks)
-    if not cells:
-        return
-    
-    rows = _build_matrix_from_cells(cells, expected_columns=9, row_tolerance=4.0)
-    allowed = {
-        "Class",
-        "Bard",
-        "Cleric",
-        "Defiler",
-        "Druid",
-        "Fighter",
-        "Gladiator",
-        "Illusionist",
-        "Preserver",
-        "Psionicist",
-        "Ranger",
-        "Templar",
-        "Thief",
-    }
-    filtered_rows = [row for row in rows if row and (row[0] in allowed)]
-    if len(filtered_rows) < 2:
-        return
-    
-    bbox = _compute_bbox_from_cells(cells)
-    table = _table_from_rows(filtered_rows, header_rows=1, bbox=bbox)
-    page1.setdefault("tables", []).append(table)
-    for idx in table_blocks:
-        if idx == heading_idx:
-            continue
-        page1["blocks"][idx]["lines"] = []
-
-    # Place the "Table 3" heading directly above the table
-    heading_height = heading_bbox[3] - heading_bbox[1]
-    heading_top = max(bbox[1] - heading_height - 2.0, 0.0)
-    heading_bottom = heading_top + heading_height
-    heading_block["bbox"] = [
-        bbox[0],
-        heading_top,
-        bbox[0] + (heading_bbox[2] - heading_bbox[0]),
-        heading_bottom,
-    ]
-    for line in heading_block.get("lines", []):
-        line_height = float(line.get("bbox", [0, 0, 0, 0])[3]) - float(line.get("bbox", [0, 0, 0, 0])[1])
-        line["bbox"] = [
-            heading_block["bbox"][0],
-            heading_bottom - line_height,
-            heading_block["bbox"][2],
-            heading_bottom,
-        ]
-    _update_block_bbox(heading_block)
+# _find_block - MOVED to chapter_2/common.py
 
 
-def _fix_dwarves_section_text_ordering(page2: dict) -> None:
-    """Fix text ordering in the Dwarves section on page 2.
-    
-    The sentence "The task to which a dwarf is presently committed" appears at the end
-    but should be at the beginning of the paragraph starting with "is referred to as his focus".
-    The ending "for compromise in the mind of a dwarf." should be appended to the paragraph 
-    ending with "There is very little room".
-    """
-    # First pass: Find the relevant blocks
-    focus_start_block = None  # Block with "is referred to as his focus"
-    focus_end_block = None  # Block with "There is very little room"
-    duplicate_block_idx = None
-    ending_line_to_append = None
-    
-    for block_idx, block in enumerate(page2.get("blocks", [])):
-        if not block.get("lines"):
-            continue
-        
-        texts = [
-            _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))).strip()
-            for line in block.get("lines", [])
-        ]
-        combined = " ".join(texts)
-        
-        # Find the focus start block
-        if combined.startswith("is referred to as his focus") or any(text.startswith("is referred to as his focus") for text in texts):
-            focus_start_block = block
-        
-        # Find the focus end block
-        if "There is very little room" in combined:
-            focus_end_block = block
-        
-        # Find the duplicate block with both phrases
-        if "The task to which a dwarf is presently committed" in combined and "for compromise in the mind of a dwarf" in combined:
-            duplicate_block_idx = block_idx
-            # Extract the ending line
-            for line in block.get("lines", []):
-                line_text = _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))).strip()
-                # Only save the line with "for compromise" (not the "The task" line)
-                if "for compromise in the mind of a dwarf" in line_text and "The task to which a dwarf is presently committed" not in line_text:
-                    ending_line_to_append = deepcopy(line)
-                    break
-    
-    # Second pass: Modify the blocks
-    if focus_start_block and focus_end_block and ending_line_to_append:
-        # Prepend "The task to which a dwarf is presently committed " to the focus start block
-        if focus_start_block.get("lines"):
-            first_line = focus_start_block["lines"][0]
-            first_line_text = _normalize_plain_text("".join(span.get("text", "") for span in first_line.get("spans", []))).strip()
-            
-            if first_line_text.startswith("is referred to as his focus"):
-                # Modify the first span of this line
-                if first_line.get("spans"):
-                    first_span = first_line["spans"][0]
-                    original_text = first_span.get("text", "")
-                    # Only prepend if it hasn't been done already
-                    if not original_text.startswith("The task to which a dwarf"):
-                        first_span["text"] = "The task to which a dwarf is presently committed " + original_text
-        
-        # Append "for compromise in the mind of a dwarf." to the focus end block
-        focus_end_block["lines"].append(ending_line_to_append)
-        _update_block_bbox(focus_end_block)
-    
-    # Remove the duplicate block
-    if duplicate_block_idx is not None and duplicate_block_idx < len(page2.get("blocks", [])):
-        page2["blocks"].pop(duplicate_block_idx)
+# _process_table_2_ability_adjustments - MOVED to chapter_2/tables.py
 
 
-def _process_other_languages_table(page2: dict) -> None:
-    """Process Other Languages table on page 2."""
-    match = _find_block(page2, lambda texts: any(text == "Other Languages" for text in texts))
-    if not match:
-        return
-    
-    heading_idx, heading_block = match
-    heading_bbox = [float(coord) for coord in heading_block.get("bbox", [0, 0, 0, 0])]
-    y_min = heading_bbox[1] - 2.0
-    next_heading = _find_block(page2, lambda texts: any(text == "Dwarves" for text in texts))
-    y_max = float(next_heading[1]["bbox"][1]) - 2.0 if next_heading else float(page2.get("height", 0) or 0)
-
-    table_blocks = []
-    for idx in range(heading_idx + 1, len(page2.get("blocks", []))):
-        block = page2["blocks"][idx]
-        if not block.get("lines"):
-            continue
-        bbox = [float(coord) for coord in block.get("bbox", [0, 0, 0, 0])]
-        if bbox[1] < y_min or bbox[1] > y_max:
-            continue
-        width = bbox[2] - bbox[0]
-        if width > 140.0:
-            continue
-        table_blocks.append(idx)
-
-    if not table_blocks:
-        return
-    
-    cells = _collect_cells_from_blocks(page2, table_blocks)
-    if not cells:
-        return
-    
-    rows = _build_matrix_from_cells(cells, expected_columns=2, row_tolerance=4.0)
-    allowed_first = {
-        "Aarakocra*",
-        "Belgoi",
-        "Ettercap",
-        "Giant",
-        "Goblin Spider",
-        "Jozhal*",
-        "Meazel",
-        "Yuan-ti",
-    }
-    allowed_second = {
-        "Anakore",
-        "Braxat",
-        "Genie*",
-        "Gith",
-        "Halfling",
-        "Kenku*",
-        "Thri-kreen",
-    }
-    filtered_rows = []
-    for row in rows:
-        if not row:
-            continue
-        if len(row) >= 2 and (row[0] in allowed_first or row[1] in allowed_second):
-            filtered_rows.append(row)
-    if filtered_rows:
-        bbox = _compute_bbox_from_cells(cells)
-        table = _table_from_rows(filtered_rows, header_rows=0, bbox=bbox)
-        page2.setdefault("tables", []).append(table)
-        for idx in table_blocks:
-            page2["blocks"][idx]["lines"] = []
+# _process_racial_ability_requirements_table - MOVED to chapter_2/tables.py
 
 
-def _fix_elves_section_paragraph_breaks(page3: dict) -> None:
-    """Fix paragraph breaks in the Elves section on page 3.
-    
-    The Elves section has 11 paragraphs but they get merged into 1 huge paragraph
-    due to the two-column layout. We need to add paragraph break hints based on
-    sentence endings that should start new paragraphs.
-    """
-    # The Elves section starts with specific sentences that should be paragraph breaks.
-    # We'll mark these blocks to force paragraph breaks in the renderer.
-    
-    paragraph_starts = [
-        "The dunes and steppes of Athas",  # Para 1
-        "Elves are all brethren",  # Para 2
-        "Individually, tribal elves",  # Para 3
-        "Elves use no beasts",  # Para 4
-        "While most elven tribes",  # Para 5
-        "Elven culture",  # Para 6
-        "A player character elf",  # Para 7
-        "Elves are masterful warriors",  # Para 8
-        "Elves gain a bonus to surprise",  # Para 9
-        "Elves have no special knowledge",  # Para 10
-        "With nimble fingers",  # Para 11
-    ]
-    
-    # Find blocks that start these paragraphs and mark them
-    for block in page3.get("blocks", []):
-        if not block.get("lines"):
-            continue
-        
-        # Check first line of block
-        first_line = block["lines"][0]
-        first_text = _normalize_plain_text("".join(span.get("text", "") for span in first_line.get("spans", []))).strip()
-        
-        # If this block starts with one of our paragraph starts, mark it
-        for para_start in paragraph_starts:
-            if first_text.startswith(para_start):
-                # Add a marker to force paragraph break
-                block["__force_paragraph_break"] = True
-                break
+# _process_table_3_racial_class_limits - MOVED to chapter_2/tables.py
 
 
-def _fix_elves_roleplaying_paragraph_breaks(page4: dict) -> None:
-    """Fix paragraph breaks in the Roleplaying section after Elves on page 4.
-    
-    The Roleplaying section has 3 paragraphs but they get merged into 1.
-    We need to force paragraph breaks at specific sentences.
-    
-    The 3 paragraphs should be:
-    1. "Elves have no great love..."
-    2. "When encountering outsiders...will be taking animal or magical transportation."
-    3. "Elves never ride on beasts..."
-    """
-    paragraph_starts = [
-        "When encountering outsiders",  # Para 2
-        "Elves never ride on beasts",   # Para 3
-    ]
-    
-    # Find the Roleplaying block and mark lines that should start new paragraphs
-    for block in page4.get("blocks", []):
-        if not block.get("lines"):
-            continue
-        
-        # Check if this is the Roleplaying block (contains "Roleplaying:" at start)
-        first_line = block["lines"][0]
-        first_text = _normalize_plain_text("".join(span.get("text", "") for span in first_line.get("spans", []))).strip()
-        
-        if not first_text.startswith("Roleplaying:"):
-            continue
-        
-        # Mark lines that should start new paragraphs
-        for line in block["lines"]:
-            line_text = _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))).strip()
-            for para_start in paragraph_starts:
-                if line_text.startswith(para_start):
-                    # Mark this line to force a paragraph break
-                    line["__force_line_break"] = True
-                    break
-            
-            # Special handling: If a line contains "transportation." followed by other content,
-            # split it at that point
-            if "will be taking animal or magical transportation." in line_text:
-                # Check if there's content after "transportation." in the same line
-                if line_text.index("transportation.") + len("transportation.") < len(line_text) - 1:
-                    # There's more content after "transportation." - need to split mid-line
-                    # Mark this line for splitting at "transportation."
-                    line["__split_at_transportation"] = True
+# _fix_dwarves_section_text_ordering - MOVED to chapter_2/chapter_2.py
+
+# _process_other_languages_table - MOVED to chapter_2/physical_tables.py
 
 
-
-def _fix_half_elves_section_paragraph_breaks(pages: list) -> None:
-    """Fix paragraph breaks in the Half-Elves section on pages 4-5.
-    
-    The Half-Elves section has 11 paragraphs but they get merged together.
-    We need to force paragraph breaks at specific sentences.
-    """
-    paragraph_starts = [
-        "Elves and humans travel",          # Para 1 - Introduction
-        "A half-elf is generally tall",     # Para 2 - Physical description
-        "A half-elf'salife is typically",   # Para 3 - Social hardships (note: typo in PDF, no space)
-        # Para 4 handled separately - sentence starts mid-line: ". Rarely do half-"
-        "Intolerance, however, has given",  # Para 5 - Self-reliance
-        "The skills involved in survival",  # Para 6 - Survival skills
-        "Coincidentally, faced with",       # Para 7 - Alien races
-        "Also, some half-elves turn",       # Para 8 - Animal companions
-        "Half-elves add one to their",      # Para 9 - Ability scores
-        "A half-elf character can choose",  # Para 10 - Class options
-        "A half-elf gains some benefits",   # Para 11 - Level benefits
-    ]
-    
-    # Process pages 4 and 5
-    for page_idx in [4, 5]:
-        if page_idx >= len(pages):
-            continue
-        page = pages[page_idx]
-        
-        for block in page.get("blocks", []):
-            if not block.get("lines"):
-                continue
-            
-            # Check each line in the block
-            for line in block["lines"]:
-                line_text = _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))).strip()
-                
-                # Check for regular paragraph starts
-                for para_start in paragraph_starts:
-                    if line_text.startswith(para_start):
-                        # Mark this line to force a paragraph break
-                        line["__force_line_break"] = True
-                        break
-                
-                # Special case: "Rarely" starts mid-line after a period
-                # The sentence ". Rarely do half-elves" spans pages 4-5
-                if ". Rarely do half" in line_text:
-                    # This line needs to be split - mark it for special handling
-                    line["__split_at_rarely"] = True
-                
-                # Special case: "Also" starts mid-line after a period
-                # The sentence ". Also, some half-elves turn" 
-                if ". Also, some half-elves" in line_text:
-                    # This line needs to be split - mark it for special handling
-                    line["__split_at_also"] = True
+# _fix_elves_section_paragraph_breaks - MOVED to chapter_2/chapter_2.py
 
 
-def _fix_half_elves_roleplaying_paragraph_breaks(pages: list) -> None:
-    """Fix paragraph breaks in the Half-elves Roleplaying section on pages 5-6.
-    
-    The Roleplaying section has 3 paragraphs but they get heavily fragmented
-    across two-column layout. We need to mark blocks to prevent unwanted splits.
-    
-    Note: Due to PDF layout, "For example..." appears before the "Roleplaying:" header
-    in the block order, so we need to handle it specially.
-    """
-    # Mark the specific blocks that should start new paragraphs
-    paragraph_start_texts = [
-        "For example, when a half-elf",     # Para 2
-        "Despite their self-reliance",      # Para 3
-    ]
-    
-    # First pass: find the Roleplaying section and mark all blocks
-    roleplaying_start_idx = -1
-    roleplaying_end_idx = -1
-    for_example_idx = -1
-    
-    for page_idx in [5, 6]:
-        if page_idx >= len(pages):
-            continue
-        page = pages[page_idx]
-        
-        for block_idx, block in enumerate(page.get("blocks", [])):
-            if not block.get("lines"):
-                continue
-            
-            first_line_text = _normalize_plain_text("".join(span.get("text", "") for span in block["lines"][0].get("spans", []))).strip()
-            
-            if "For example, when a half-elf" in first_line_text:
-                for_example_idx = (page_idx, block_idx)
-            elif "Roleplaying: Half-elves pride" in first_line_text:
-                roleplaying_start_idx = (page_idx, block_idx)
-            elif "Half-giants" in first_line_text:
-                roleplaying_end_idx = (page_idx, block_idx)
-                break
-    
-    # Second pass: mark the blocks
-    in_roleplaying_section = False
-    for page_idx in [5, 6]:
-        if page_idx >= len(pages):
-            continue
-        page = pages[page_idx]
-        
-        for block_idx, block in enumerate(page.get("blocks", [])):
-            if not block.get("lines"):
-                continue
-            
-            # Check if this is the "For example" block (special case before header)
-            if for_example_idx and (page_idx, block_idx) == for_example_idx:
-                block["__roleplaying_section"] = True
-                block["__force_paragraph_break"] = True
-                continue
-            
-            # Check if this is the start of the Roleplaying section
-            if roleplaying_start_idx and (page_idx, block_idx) == roleplaying_start_idx:
-                in_roleplaying_section = True
-                block["__roleplaying_section"] = True
-                continue
-            
-            # Check if we've reached the end
-            if roleplaying_end_idx and (page_idx, block_idx) == roleplaying_end_idx:
-                in_roleplaying_section = False
-                break
-            
-            # If we're in the Roleplaying section, mark the block
-            if in_roleplaying_section:
-                block["__roleplaying_section"] = True
-                
-                # Check if this block should start a new paragraph
-                first_line_text = _normalize_plain_text("".join(span.get("text", "") for span in block["lines"][0].get("spans", []))).strip()
-                for para_start in paragraph_start_texts:
-                    if first_line_text.startswith(para_start):
-                        block["__force_paragraph_break"] = True
-                        break
+# _fix_elves_roleplaying_paragraph_breaks - MOVED to chapter_2/chapter_2.py
+
+
+# _fix_half_elves_section_paragraph_breaks - MOVED to chapter_2/chapter_2.py
+
+
+# _fix_half_elves_roleplaying_paragraph_breaks - MOVED to chapter_2/chapter_2.py
 
 
 def _fix_half_giants_section_paragraph_breaks(pages: list) -> None:
@@ -800,6 +155,412 @@ def _fix_half_giants_section_paragraph_breaks(pages: list) -> None:
 
 
 
+def _merge_ability_scores_header(page: dict) -> None:
+    """Merge 'Minimum and Maximum Ability' and 'Scores' into a single header.
+    
+    Args:
+        page: The page data dictionary
+    """
+    for block in page.get('blocks', []):
+        if block.get('type') != 'text':
+            continue
+        
+        lines = block.get('lines', [])
+        if len(lines) < 2:
+            continue
+        
+        # Check if this block has the split header
+        line0_text = ' '.join(span.get('text', '') for span in lines[0].get('spans', []))
+        line1_text = ' '.join(span.get('text', '') for span in lines[1].get('spans', []))
+        
+        if line0_text.strip() == "Minimum and Maximum Ability" and line1_text.strip() == "Scores":
+            # Merge the two lines into one
+            merged_text = "Minimum and Maximum Ability Scores"
+            
+            # Create a merged line with the text from both
+            merged_line = {
+                'bbox': lines[0]['bbox'],  # Use first line's bbox
+                'spans': [{
+                    'text': merged_text,
+                    'color': lines[0]['spans'][0].get('color', '#ca5804'),
+                    'font': lines[0]['spans'][0].get('font', ''),
+                    'size': lines[0]['spans'][0].get('size', 14.88)
+                }]
+            }
+            
+            # Replace the two lines with the merged line
+            block['lines'] = [merged_line] + lines[2:]
+            break
+
+
+def _force_dwarves_paragraph_breaks(page: dict) -> None:
+    """Force paragraph breaks in the Dwarves section by splitting and marking blocks.
+    
+    The Dwarves section should have 4 paragraphs:
+    1. Physical description (ends with "250 years")
+    2. Toil and dedication (starts with "A dwarfs chief love")
+    3. Focus mechanics (starts with "The task to which")
+    4. Magic and social (starts with "By nature, dwarves")
+    """
+    blocks_to_insert = []
+    
+    for idx, block in enumerate(page.get("blocks", [])):
+        if block.get("type") != "text":
+            continue
+        
+        lines = block.get("lines", [])
+        if not lines:
+            continue
+        
+        # Check if any line starts a new paragraph
+        for line_idx, line in enumerate(lines):
+            line_text = _normalize_plain_text(
+                "".join(span.get("text", "") for span in line.get("spans", []))
+            )
+            
+            # Check if this line should start a new paragraph
+            if (line_text.startswith("A dwarfs chief") or
+                line_text.startswith("A dwarf's chief") or
+                line_text.startswith("The task to which") or
+                line_text.startswith("By nature, dwarves")):
+                
+                # Split this block at this line
+                if line_idx > 0:
+                    # First part: lines before this one
+                    first_part_lines = lines[:line_idx]
+                    # Second part: this line and after (with force break flag)
+                    second_part_lines = lines[line_idx:]
+                    
+                    # Update current block to only have first part
+                    block["lines"] = first_part_lines
+                    _update_block_bbox(block)
+                    
+                    # Create new block for second part
+                    second_block = {
+                        "type": "text",
+                        "lines": second_part_lines,
+                        "__force_paragraph_break": True
+                    }
+                    _update_block_bbox(second_block)
+                    
+                    # Mark for insertion after current block
+                    blocks_to_insert.append((idx + 1, second_block))
+                    break
+                else:
+                    # This line is the first line, just mark the block
+                    block["__force_paragraph_break"] = True
+    
+    # Insert new blocks
+    for offset, (insert_idx, new_block) in enumerate(blocks_to_insert):
+        page["blocks"].insert(insert_idx + offset, new_block)
+
+
+def _force_half_elves_roleplaying_paragraph_breaks(page: dict) -> None:
+    """Force paragraph breaks in the Half-elves Roleplaying section.
+    
+    The Half-elves Roleplaying section should have 3 paragraphs:
+    1. Self-reliance introduction
+    2. Example of half-elf behavior  
+    3. Acceptance seeking behavior (starts with "Despite their self-reliance")
+    """
+    blocks_to_insert = []
+    
+    for idx, block in enumerate(page.get("blocks", [])):
+        if block.get("type") != "text":
+            continue
+        
+        lines = block.get("lines", [])
+        if not lines:
+            continue
+        
+        # Check if any line starts the third paragraph
+        for line_idx, line in enumerate(lines):
+            line_text = _normalize_plain_text(
+                "".join(span.get("text", "") for span in line.get("spans", []))
+            )
+            
+            # Check if this line should start a new paragraph
+            if line_text.startswith("Despite their self-reliance"):
+                # Split this block at this line
+                if line_idx > 0:
+                    # First part: lines before this one
+                    first_part_lines = lines[:line_idx]
+                    # Second part: this line and after (with force break flag)
+                    second_part_lines = lines[line_idx:]
+                    
+                    # Update current block to only have first part
+                    block["lines"] = first_part_lines
+                    _update_block_bbox(block)
+                    
+                    # Create new block for second part
+                    second_block = {
+                        "type": "text",
+                        "lines": second_part_lines,
+                        "__force_paragraph_break": True
+                    }
+                    _update_block_bbox(second_block)
+                    
+                    # Mark for insertion after current block
+                    blocks_to_insert.append((idx + 1, second_block))
+                    break
+                else:
+                    # This line is the first line, just mark the block
+                    block["__force_paragraph_break"] = True
+    
+    # Insert new blocks
+    for offset, (insert_idx, new_block) in enumerate(blocks_to_insert):
+        page["blocks"].insert(insert_idx + offset, new_block)
+
+
+# _force_human_paragraph_breaks - MOVED to chapter_2/humans.py
+
+
+# _process_mul_exertion_table - MOVED to chapter_2/mul.py
+
+
+# _force_mul_paragraph_breaks - MOVED to chapter_2/mul.py
+
+
+# _force_mul_roleplaying_paragraph_breaks - MOVED to chapter_2/mul.py
+
+
+# _force_thri_kreen_paragraph_breaks - MOVED to chapter_2/thri_kreen.py
+
+
+# _force_thri_kreen_roleplaying_paragraph_breaks - MOVED to chapter_2/thri_kreen.py
+
+
+# _process_height_weight_table - MOVED to chapter_2/physical_tables.py
+
+
+# _process_starting_age_table - MOVED to chapter_2/physical_tables.py
+
+
+def _process_aging_effects_table(page: dict) -> None:
+    """Process Aging Effects table programmatically (4 columns, 1 header row)."""
+    def _line_text(line: dict) -> str:
+        return _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))).strip()
+    
+    # Section bounds: from "Aging Effects" to the next major header or page end
+    start_match = _find_block(page, lambda texts: any("Aging Effects" in t for t in texts))
+    if not start_match:
+        return
+    _, start_block = start_match
+    y_min = float(start_block.get("bbox", [0, 0, 0, 0])[3]) + 2.0
+    # Try to cap by next colored header if present; otherwise to page bottom
+    y_max = float(page.get("height", 0) or 0)
+
+    # If an aging effects table already exists, still remove header label lines within the section bounds
+    for table in page.get("tables", []):
+        rows = table.get("rows", [])
+        if not rows:
+            continue
+        header = rows[0].get("cells", [])
+        if header and header[0].get("text", "").startswith("Race") and any("Middle Age" in c.get("text", "") for c in header):
+            # Cleanup header label lines so they don't render as document headers
+            header_labels = {"Race", "R a c e", "Middle Age*", "Old Age**", "Venerable***"}
+            # Collect race names from this existing table for aggregated line detection
+            race_names_lower = []
+            for r in rows[1:]:
+                cells = r.get("cells", [])
+                if cells:
+                    nm = (cells[0].get("text") or "").strip().lower()
+                    if nm:
+                        race_names_lower.append(nm)
+            for block in page.get("blocks", []):
+                if block.get("type") != "text":
+                    continue
+                remaining = []
+                changed = False
+                for line in block.get("lines", []):
+                    x0, y0, x1, y1 = [float(c) for c in line.get("bbox", [0, 0, 0, 0])]
+                    if y0 <= y_min or y0 >= y_max:
+                        remaining.append(line)
+                        continue
+                    txt = _line_text(line)
+                    if txt in header_labels:
+                        changed = True
+                        continue
+                    # Remove aggregated race list lines using race names from table
+                    tlow = txt.lower()
+                    matches = sum(1 for rn in race_names_lower if rn and rn in tlow)
+                    if matches >= 3:
+                        changed = True
+                        continue
+                    remaining.append(line)
+                if changed:
+                    block["lines"] = remaining
+                    if remaining:
+                        _update_block_bbox(block)
+                    else:
+                        block["bbox"] = [0.0, 0.0, 0.0, 0.0]
+            return
+    
+    # Find column header positions
+    race_block = _find_block(page, lambda texts: any(t.strip().lower().replace(" ", "") == "race" or t == "R a c e" for t in texts))
+    mid_block = _find_block(page, lambda texts: any("Middle Age" in t for t in texts))
+    old_block = _find_block(page, lambda texts: any("Old Age" in t for t in texts))
+    ven_block = _find_block(page, lambda texts: any("Venerable" in t for t in texts))
+    
+    if not (race_block and mid_block and old_block and ven_block):
+        return
+    
+    race_split_x = float(race_block[1]["bbox"][2]) + 5.0
+    def _header_center(block: dict, target: str) -> float | None:
+        for line in block.get("lines", []):
+            txt = _line_text(line)
+            if txt == target:
+                x0, _, x1, _ = [float(c) for c in line.get("bbox", [0, 0, 0, 0])]
+                return (x0 + x1) / 2.0
+        return None
+    mid_cx = _header_center(mid_block[1], "Middle Age*")
+    old_cx = _header_center(old_block[1], "Old Age**")
+    ven_cx = _header_center(ven_block[1], "Venerable***")
+    if mid_cx is None or old_cx is None or ven_cx is None:
+        return
+    
+    y_tol = 3.5
+    # Build potential row y positions from mid/old/ven numeric cells
+    candidate_y: List[float] = []
+    for block in page.get("blocks", []):
+        if block.get("type") != "text":
+            continue
+        for line in block.get("lines", []):
+            x0, y0, x1, y1 = [float(c) for c in line.get("bbox", [0, 0, 0, 0])]
+            y_center = (y0 + y1) / 2.0
+            if y_center <= y_min or y_center >= y_max:
+                continue
+            cx = (x0 + x1) / 2.0
+            txt = _line_text(line)
+            # Accept numbers or '-' under any of the three numeric columns
+            if (abs(cx - mid_cx) <= 40.0 or abs(cx - old_cx) <= 40.0 or abs(cx - ven_cx) <= 40.0):
+                if txt and (txt.isdigit() or txt == "-" or txt in {"25", "30", "67", "40", "60", "80", "100", "120", "140", "160", "185", "200"}):
+                    # The constants above are only filters for numeric-like content; not hardcoded mapping
+                    candidate_y.append(y_center)
+    if not candidate_y:
+        return
+    candidate_y.sort()
+    unique_y: List[float] = []
+    for y_c in candidate_y:
+        if not unique_y or all(abs(y_c - y_prev) > y_tol for y_prev in unique_y):
+            unique_y.append(y_c)
+    
+    def _find_near(x_target: float, y_center: float, *, allow_dash: bool = False) -> str:
+        best_txt = ""
+        best_dx = 1e9
+        for block in page.get("blocks", []):
+            if block.get("type") != "text":
+                continue
+            for line in block.get("lines", []):
+                lx0, ly0, lx1, ly1 = [float(c) for c in line.get("bbox", [0, 0, 0, 0])]
+                if abs(((ly0 + ly1) / 2.0) - y_center) > y_tol:
+                    continue
+                cx = (lx0 + lx1) / 2.0
+                dx = abs(cx - x_target)
+                if dx < best_dx:
+                    txt = _line_text(line)
+                    if not txt:
+                        continue
+                    if txt == "-" and not allow_dash:
+                        continue
+                    if not (txt.isdigit() or (allow_dash and txt == "-")):
+                        continue
+                    best_dx = dx
+                    best_txt = txt
+        return best_txt
+    
+    def _find_race(y_center: float) -> str:
+        best = ""
+        best_x = 1e9
+        for block in page.get("blocks", []):
+            if block.get("type") != "text":
+                continue
+            for line in block.get("lines", []):
+                lx0, ly0, lx1, ly1 = [float(c) for c in line.get("bbox", [0, 0, 0, 0])]
+                if abs(((ly0 + ly1) / 2.0) - y_center) > y_tol:
+                    continue
+                if lx1 >= race_split_x:
+                    continue
+                txt = _line_text(line)
+                if not txt or any(k in txt for k in ["Race", "Middle Age", "Old Age", "Venerable", "*"]):
+                    continue
+                if lx0 < best_x:
+                    best_x = lx0
+                    best = txt
+        return best
+    
+    header_row = {
+        "cells": [
+            {"text": "Race"},
+            {"text": "Middle Age*"},
+            {"text": "Old Age**"},
+            {"text": "Venerable***"},
+        ]
+    }
+    data_rows: List[dict] = []
+    for y_c in unique_y:
+        race = _find_race(y_c)
+        if not race:
+            continue
+        middle = _find_near(mid_cx, y_c, allow_dash=True)
+        old = _find_near(old_cx, y_c, allow_dash=True)
+        venerable = _find_near(ven_cx, y_c, allow_dash=True)
+        if any([middle, old, venerable]):
+            data_rows.append({"cells": [{"text": race}, {"text": middle or "-"}, {"text": old or "-"}, {"text": venerable or "-"}]})
+    
+    if not data_rows:
+        return
+    
+    # Compute a stable bbox anchored just below the "Aging Effects" header
+    col_xs = [
+        float(race_block[1]["bbox"][0]), float(race_block[1]["bbox"][2]),
+        float(mid_block[1]["bbox"][0]), float(mid_block[1]["bbox"][2]),
+        float(old_block[1]["bbox"][0]), float(old_block[1]["bbox"][2]),
+        float(ven_block[1]["bbox"][0]), float(ven_block[1]["bbox"][2]),
+    ]
+    ax_left = max(0.0, min(col_xs) - 8.0)
+    ax_right = min(float(page.get("width", 612.0) or 612.0), max(col_xs) + 8.0)
+    astart_y = float(start_block.get("bbox", [0, 0, 0, 0])[3]) + 6.0
+    alast_row_y = max(unique_y) if unique_y else astart_y + 20.0
+    aend_y = min(y_max, alast_row_y + 18.0)
+    bbox = [ax_left, astart_y, ax_right, aend_y]
+    
+    table = {"rows": [header_row] + data_rows, "header_rows": 1, "bbox": bbox}
+    # Remove any pre-existing malformed tables in this section bounds
+    cleaned_tables = []
+    for t in page.get("tables", []):
+        tb = [float(c) for c in t.get("bbox", [0, 0, 0, 0])]
+        ty0, ty1 = tb[1], tb[3]
+        if ty1 < y_min - 5.0 or ty0 > y_max + 5.0:
+            cleaned_tables.append(t)
+    page["tables"] = cleaned_tables
+    page.setdefault("tables", []).append(table)
+
+    # Remove header label lines within the section bounds so they don't render as document headers
+    # This includes: "Race"/"R a c e", "Middle Age*", "Old Age**", "Venerable***"
+    header_labels = {"Race", "R a c e", "Middle Age*", "Old Age**", "Venerable***"}
+    for block in page.get("blocks", []):
+        if block.get("type") != "text":
+            continue
+        remaining = []
+        changed = False
+        for line in block.get("lines", []):
+            x0, y0, x1, y1 = [float(c) for c in line.get("bbox", [0, 0, 0, 0])]
+            if y0 <= y_min or y0 >= y_max:
+                remaining.append(line)
+                continue
+            txt = _line_text(line)
+            if txt in header_labels:
+                changed = True
+                continue
+            remaining.append(line)
+        if changed:
+            block["lines"] = remaining
+            if remaining:
+                _update_block_bbox(block)
+            else:
+                block["bbox"] = [0.0, 0.0, 0.0, 0.0]
+
 def apply_chapter_2_adjustments(section_data: dict) -> None:
     """Apply all Chapter 2 (Player Character Races) specific adjustments.
     
@@ -810,9 +571,10 @@ def apply_chapter_2_adjustments(section_data: dict) -> None:
     if not pages:
         return
 
-    # Page 0: Table 2 and Racial Ability Requirements
+    # Page 0: Merge ability scores header, Table 2 and Racial Ability Requirements
     if len(pages) > 0:
         page0 = pages[0]
+        _merge_ability_scores_header(page0)
         _process_table_2_ability_adjustments(page0)
         _process_racial_ability_requirements_table(page0)
 
@@ -820,12 +582,22 @@ def apply_chapter_2_adjustments(section_data: dict) -> None:
     if len(pages) > 1:
         page1 = pages[1]
         _process_table_3_racial_class_limits(page1)
+    
+    # Page 2: Force paragraph breaks in Dwarves section
+    if len(pages) > 2:
+        page2 = pages[2]
+        _force_dwarves_paragraph_breaks(page2)
 
     # Page 2: Dwarves section text fix and Other Languages table
     if len(pages) > 2:
         page2 = pages[2]
         _fix_dwarves_section_text_ordering(page2)
-        _process_other_languages_table(page2)
+        _process_other_languages_table(page2)  # Process the language list table
+    
+    # Page 4: Force paragraph breaks in Half-elves Roleplaying section
+    if len(pages) > 4:
+        page4 = pages[4]
+        _force_half_elves_roleplaying_paragraph_breaks(page4)
 
     # Page 3: Elves section paragraph breaks
     if len(pages) > 3:
@@ -845,4 +617,148 @@ def apply_chapter_2_adjustments(section_data: dict) -> None:
 
     # Pages 6-7: Half-Giants section paragraph breaks
     _fix_half_giants_section_paragraph_breaks(pages)
+    
+    # Page 10: Human and Mul section paragraph breaks
+    # Page 10 (page_number=15): Human section paragraph breaks
+    if len(pages) > 10:
+        page10 = pages[10]
+        _force_human_paragraph_breaks(page10)
+    
+    # Pages 11-12 (page_number=16-17): Mul section paragraph breaks and table
+    # Mul content spans two pages, so we need to process both
+    if len(pages) > 11:
+        page11 = pages[11]
+        _process_mul_exertion_table(page11)
+        _force_mul_paragraph_breaks(page11)
+    
+    if len(pages) > 12:
+        page12 = pages[12]
+        _process_mul_exertion_table(page12)
+        _force_mul_paragraph_breaks(page12)
+        _force_mul_roleplaying_paragraph_breaks(page12)
+        _force_thri_kreen_paragraph_breaks(page12)
+        _force_thri_kreen_roleplaying_paragraph_breaks(page12)
+    
+    # Pages 13-14 (page_number=18-19): Thri-kreen section paragraph breaks
+    # Thri-kreen content may span multiple pages
+    if len(pages) > 13:
+        page13 = pages[13]
+        _force_thri_kreen_paragraph_breaks(page13)
+        _force_thri_kreen_roleplaying_paragraph_breaks(page13)
+    
+    if len(pages) > 14:
+        page14 = pages[14]
+        _force_thri_kreen_paragraph_breaks(page14)
+        _force_thri_kreen_roleplaying_paragraph_breaks(page14)
+    
+    # Locate and process "Other Characteristics" sub-tables by header text rather than fixed indices
+    targets = {
+        "Height and Weight": _process_height_weight_table,
+        "Starting Age": _process_starting_age_table,
+        "Aging Effects": _process_aging_effects_table,
+    }
+    for page in pages:
+        if not page.get("blocks"):
+            continue
+        # Collect normalized block texts on this page
+        page_texts = []
+        for block in page.get("blocks", []):
+            for line in block.get("lines", []):
+                page_texts.append(
+                    _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", [])))
+                )
+        # Apply processors when their headers are present
+        for header, processor in targets.items():
+            if any(header in t for t in page_texts):
+                processor(page)
+
+    # Final normalization: ensure Age section has exactly two separate tables
+    for page in pages:
+        if not page.get("blocks"):
+            continue
+        has_age = any(
+            _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))) == "Age"
+            for block in page.get("blocks", [])
+            for line in block.get("lines", [])
+        )
+        if not has_age:
+            continue
+        # Identify y-range from Age H1 to end of page (subsections included)
+        age_blocks = [
+            block for block in page.get("blocks", [])
+            if any(_normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))) == "Age"
+                   for line in block.get("lines", []))
+        ]
+        if not age_blocks:
+            continue
+        age_y_min = float(age_blocks[0].get("bbox", [0, 0, 0, 0])[1]) - 2.0
+        age_y_max = float(page.get("height", 0) or 0)
+        # Keep only the two intended tables within this y-range
+        kept_tables = []
+        for t in page.get("tables", []):
+            tb = [float(c) for c in t.get("bbox", [0, 0, 0, 0])]
+            ty0, ty1 = tb[1], tb[3]
+            if ty1 < age_y_min or ty0 > age_y_max:
+                kept_tables.append(t)
+                continue
+            # Inside Age region: keep only tables with expected headers
+            rows = t.get("rows", [])
+            if not rows:
+                continue
+            header_cells = [c.get("text", "") for c in rows[0].get("cells", [])]
+            header_joined = " ".join(header_cells).lower()
+            is_starting_age = (
+                "race" in header_joined
+                and "base age" in header_joined
+                and "variable" in header_joined
+                and "max age range (base + variable)" in header_joined
+            )
+            is_aging_effects = (
+                "race" in header_joined
+                and "middle age" in header_joined
+                and "old age" in header_joined
+                and "venerable" in header_joined
+            )
+            if is_starting_age or is_aging_effects:
+                kept_tables.append(t)
+        page["tables"] = kept_tables
+
+    # Final cleanup: remove stray table label headers that may have flowed across page boundaries
+    age_label_texts = {"Base Age", "Race", "Variable", "(Base + Variable)", "Maximum Age Range"}
+    for page in pages:
+        if not page.get("blocks"):
+            continue
+        # Only consider pages that contain Age-related content
+        page_has_age_content = any(
+            any(token in _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", [])))
+                for token in ("Age", "Starting Age", "Aging Effects"))
+            for block in page.get("blocks", [])
+            for line in block.get("lines", [])
+        )
+        if not page_has_age_content:
+            continue
+        # Remove any colored header lines matching the age label texts
+        for block in page.get("blocks", []):
+            if block.get("type") != "text":
+                continue
+            remaining = []
+            changed = False
+            for line in block.get("lines", []):
+                txt = _normalize_plain_text("".join(span.get("text", "") for span in line.get("spans", []))).strip()
+                if txt in age_label_texts:
+                    changed = True
+                    continue
+                # Remove aggregated race list paragraphs in Age region (heuristic)
+                import re as _re
+                caps = _re.findall(r"\b[A-Z][A-Za-z-]*\b", txt)
+                if len(caps) >= 5:
+                    changed = True
+                    continue
+                remaining.append(line)
+            if changed:
+                block["lines"] = remaining
+                if remaining:
+                    _update_block_bbox(block)
+                else:
+                    block["bbox"] = [0.0, 0.0, 0.0, 0.0]
 
